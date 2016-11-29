@@ -1,0 +1,28 @@
+{
+    "pinout": {
+        "floors": [
+            1,
+            2,
+            3,
+            4
+        ],
+        "limit": 11,
+        "start": 10,
+        "direction": 12,
+        "speed": 13
+    },
+    "controlConstants": {
+        "start": {
+            "start": 1,
+            "stop": 0
+        },
+        "direction": {
+            "up": 1,
+            "down": 0
+        },
+        "speed": {
+            "fast": 1,
+            "slow": 0
+        }
+    }
+}
