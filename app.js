@@ -1,0 +1,82 @@
+var express = require('express');
+var path = require('path');
+//var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+
+var app = express();
+var expressWs = require('express-ws')(app);
+//var manager = require('./lib/state/manager')
+var debug = require('debug')('app');
+
+// // view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+
+Object.prototype.deepClone = function (obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+app.ws('/sock/elevator', function (ws, req) {
+  debug("WebSocket connection established");
+  
+  ws.on('message', function (msg) {
+    debug("WebSocket message of type: " + (JSON.parse(msg)).type);
+
+    try {
+      msg = JSON.parse(msg);
+    } catch (error) {
+      debug("Error with parsing, probably just string");
+    }
+
+    ws.send(JSON.stringify(msg));
+  })
+
+
+  ws.on('close', function () {
+    debug("Connection closed");
+  })
+});
+
+// app.use(express.static(path.join(__dirname, '../public')));
+// app.use(express.static(path.join(__dirname, 'public'), {
+//   dotfiles: 'allow'
+// }));
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
+module.exports = app;

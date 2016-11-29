@@ -1,0 +1,25 @@
+{
+  "name": "Soft",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "startEmulator": "node ./bin/www --emulator",
+    "test": "mocha test --recursive",
+    "testEmulator": "mocha test --recursive --emulator"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "chai": "^3.5.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "~2.4.1",
+    "express": "~4.13.4",
+    "express-ws": "^2.0.0",
+    "jsonfile": "^2.4.0",
+    "mocha": "^3.1.2",
+    "morgan": "~1.7.0",
+    "onoff": "^1.1.1",
+    "serve-favicon": "~2.3.0"
+  }
+}
