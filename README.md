@@ -4,7 +4,7 @@ Elevator Control - Engineering Project - Backend part
 
 #### Overview
 
-This project is part of my engineering project (Elevator control through the internet). 
+This project is part of my engineering project : **"Controlling the movement of the elevator via Internet."**. 
 Server works on the RaspberryPi and does control the elevator model from EA541 
 (laboratory in the old building of ETI).
 
@@ -30,4 +30,4 @@ from the project root directory. The backend is now running on port 8081.
 
 #### Code Guidelines
 
-Keep lines no longer than 80 characters.
+Keep lines no longer than 100 characters.
