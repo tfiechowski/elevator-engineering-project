@@ -1,5 +1,13 @@
 Elevator Control - Engineering Project - Backend part
 ============
+#### Gdansk University of Technology, Faculty of Electronics, Telecommunications and Informatics (ETI)
+
+#### Overview
+
+This project is part of my engineering project (Elevator control through the internet). 
+Server works on the RaspberryPi and does control the elevator model from EA541 
+(laboratory in the old building of ETI).
+
 
 #### Pin configuration
 
