@@ -10,6 +10,8 @@ var expressWs = require('express-ws')(app);
 //var manager = require('./lib/state/manager')
 var debug = require('debug')('app');
 
+var stateMonitor = require('./src/state/monitor');
+
 // // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');

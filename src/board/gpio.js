@@ -6,36 +6,54 @@ var rpio;
 try {
     rpio = require('rpio');
 } catch (E) {
-    rpio = {};
+    var caution = () => {
+        debug("Not running on RaspberryPi- GPIO operations have no effect!");
+    }
+
+    rpio = {
+        open: caution,
+        write: caution,
+        read: caution,
+        close: caution,
+        poll: caution,
+        monitor: caution,
+        INPUT: "INPUT",
+        OUTPUT: "OUTPUT",
+        HIGH: 1,
+        LOW: 0
+    };
 }
 
 function GPIO() {
 
 }
 
-GPIO.prototype.open = function(pin, mode) {
+GPIO.open = function(pin, mode) {
     debug("Opening GPIO " + pin + " to: " + mode);
     rpio.open(pin, mode);
 }
 
-GPIO.prototype.write = function (pin, val) {
+GPIO.write = function (pin, val) {
     debug("Writing \"" + val + "\" to GPIO: " + pin);
     rpio.write(pin, val);
 }
 
-GPIO.prototype.read = function (pin) {
+GPIO.read = function (pin) {
     debug("Reading GPIO: " + pin);
     return rpio.read(pin);
 }
 
-GPIO.prototype.monitor = function (pin, callback) {
+GPIO.monitor = function (pin, callback) {
     debug("Monitoring GPIO: " + pin);
     rpio.poll(pin, callback);
 }
 
-GPIO.prototype.close = function (pin) {
+GPIO.close = function (pin) {
     rpio.close(pin);
 }
+
+GPIO.INPUT = rpio.INPUT;
+GPIO.OUTPUT = rpio.OUTPUT;
 
 module.exports = {
     GPIO: GPIO,

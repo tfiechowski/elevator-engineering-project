@@ -8,7 +8,7 @@ var gpio = require('../board/gpio').GPIO;
 var gpioValues = require('../board/gpio').Values
 var gpioModes = require('../board/gpio').Modes
 
-var pinout = require('../../config').pinout;
+var pinout = require('../../config/config.json').pinout;
 var debug = require('debug')('state/monitor');
 
 
@@ -48,12 +48,13 @@ function initializeMonitoring() {
     debug("Initializing GPIO monitoring : ");
 
     var initOutputPinMonitoring = (key) => {
-        let pin = pinout[key];
+        debug('        Setting ' + key + ' ...'); 
+        var pin = pinout[key];
 
         gpio.open(pin, gpioModes.OUTPUT);
         gpio.monitor(pin, () => {
             currentState[key] = gpio.read(pin);
-            // TODO: emit state change
+            StateMonitorObservable.changeState(currentState);
         });    
     }
 
@@ -64,12 +65,12 @@ function initializeMonitoring() {
 
 
     debug("    Input pins...");
-    for(var i in pinout.floors) {
+    for(var i of pinout.floors) {
         ((pin) => {
             gpio.open(pin, gpioModes.INPUT);
             gpio.monitor(pin, () => {
                 currentState[key] = gpio.read(pin);
-                // TODO: emit state change
+                StateMonitorObservable.changeState(currentState);
             });    
         })(i);
     }
