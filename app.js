@@ -26,6 +26,11 @@ Object.prototype.deepClone = function (obj) {
 
 app.ws('/sock/elevator', function (ws, req) {
   debug("WebSocket connection established");
+
+  stateMonitor.Observable.on(stateMonitor.Events.CHANGED, (newState) => {
+    debug("Sending new state");
+    ws.send(JSON.stringify(newState));
+  })
   
   ws.on('message', function (msg) {
     debug("WebSocket message of type: " + (JSON.parse(msg)).type);
@@ -46,9 +51,9 @@ app.ws('/sock/elevator', function (ws, req) {
 });
 
 // app.use(express.static(path.join(__dirname, '../public')));
-// app.use(express.static(path.join(__dirname, 'public'), {
-//   dotfiles: 'allow'
-// }));
+app.use(express.static(path.join(__dirname, 'public'), {
+  dotfiles: 'allow'
+}));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

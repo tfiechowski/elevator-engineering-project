@@ -37,9 +37,11 @@ util.inherits(StateMonitorObservable, EventEmitter);
 
 // TODO: Only this module can emit change state, maybe dont prototype it? 
 StateMonitorObservable.prototype.changeState = function (newState) {
+    debug("State changed. Emitting event!");
     this.emit(Events.CHANGED, newState);
 }
 
+var stateMonitorObservable = new StateMonitorObservable();
 
 
 // Initialization
@@ -54,7 +56,7 @@ function initializeMonitoring() {
         gpio.open(pin, gpioModes.OUTPUT);
         gpio.monitor(pin, () => {
             currentState[key] = gpio.read(pin);
-            StateMonitorObservable.changeState(currentState);
+            stateMonitorObservable.changeState(currentState);
         });    
     }
 
@@ -70,7 +72,7 @@ function initializeMonitoring() {
             gpio.open(pin, gpioModes.INPUT);
             gpio.monitor(pin, () => {
                 currentState[key] = gpio.read(pin);
-                StateMonitorObservable.changeState(currentState);
+                stateMonitorObservable.changeState(currentState);
             });    
         })(i);
     }
@@ -81,6 +83,6 @@ function initializeMonitoring() {
 initializeMonitoring();
 
 module.exports = {
-    Observable: StateMonitorObservable,
+    Observable: stateMonitorObservable,
     Events: Events
 }

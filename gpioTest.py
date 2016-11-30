@@ -2,15 +2,16 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BOARD)
 
-pins = { 'limit': 18, 'start': 16, 'direction': 12, 'speed': 22 }
-initialValues = { 'limit': GPIO.LOW, 'direction': GPIO.LOW, 'start': GPIO.LOW, 'speed': GPIO.LOW }
+pins = { 'start': 18, 'direction': 22, 'speed': 24 }
+initialValues = { 'direction': GPIO.LOW, 'start': GPIO.LOW, 'speed': GPIO.LOW }
 
 # Setting every pin to output
 for pin in pins:
-    GPIO.setup(pins[pin], GPIO.OUT, initialValues[pin])
+    GPIO.setup(pins[pin], GPIO.OUT)
+    GPIO.output(pins[pin], initialValues[pin])
 
 def set_GPIO_arr(array):
-    pinNames = ['limit', 'start', 'direction', 'speed']
+    pinNames = ['start', 'direction', 'speed']
 
     for x in range(0,4):
         if len(array) >= x + 1:
@@ -20,7 +21,7 @@ for x in range(0,3):
     print x
 
 while True:
-    values = raw_input("Type values (L D S Sp): ")
+    values = raw_input("Type values (D S Sp): ")
 
     print values.split(" ")
 
