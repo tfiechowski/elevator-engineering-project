@@ -118,7 +118,7 @@ function goToFloor(destinationFloor) {
 
     var destinationDirection = stateUtils.getDirectionToFloorFromCurrentPosition(currentState, destinationFloor);
     
-    setDirection(destinationFloor);
+    setDirection(destinationDirection);
     start();
 }
 

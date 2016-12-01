@@ -1,5 +1,5 @@
 var controlConstants = require('./constants');
-
+var debug = require('debug')('state/utils');
 /**
  * Transoptor sensor readings for floors:
  * 
@@ -33,8 +33,10 @@ function getDirectionToFloorFromCurrentPosition(currentState, destinationFloor) 
     var currentFloor = translateStateToFloor(currentState);
 
     if (currentFloor < destinationFloor) {
+        debug("Destination floor is above current(" + destinationFloor + " > " + currentFloor + "). Direction : UP)");
         return controlConstants.DIRECTION.UP;
     } else {
+        debug("Destination floor is below current(" + destinationFloor + " < " + currentFloor + "). Direction : DOWN)");
         return controlConstants.DIRECTION.DOWN;
     }
 }
