@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
 /**
+ * Global utilities
+ */
+var globalUtils = require('../globalUtils');
+
+/**
  * Module dependencies.
  */
 

@@ -55,14 +55,15 @@ GPIO.close = function (pin) {
 GPIO.INPUT = rpio.INPUT;
 GPIO.OUTPUT = rpio.OUTPUT;
 
-module.exports = {
-    GPIO: GPIO,
-    Values: {
-        'High': rpio.HIGH,
-        'Low': rpio.LOW
-    },
-    Modes: {
-        'INPUT': rpio.INPUT,
-        'OUTPUT': rpio.OUTPUT
+GPIO.HIGH = rpio.HIGH;
+GPIO.LOW = rpio.LOW;
+
+GPIO.convertToPinValue = function(value) {
+    if(value === 0) {
+        return GPIO.LOW;
+    } else {
+        return GPIO.HIGH;
     }
 }
+
+module.exports = GPIO;

@@ -13,16 +13,16 @@
     },
     "controlConstants": {
         "start": {
-            "start": 1,
-            "stop": 0
+            "start": 0,
+            "stop": 1
         },
         "direction": {
-            "up": 1,
-            "down": 0
+            "up": 0,
+            "down": 1
         },
         "speed": {
-            "fast": 1,
-            "slow": 0
+            "fast": 0,
+            "slow": 1
         }
     }
 }

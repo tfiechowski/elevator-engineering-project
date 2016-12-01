@@ -20,11 +20,11 @@ var stateMonitor = require('./src/state/monitor');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 
-Object.prototype.deepClone = function (obj) {
+Object.deepClone = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-var boardApi = require('./src/board/api');
+var elevatorApi = require('./src/elevator/api');
 app.ws('/sock/elevator', function (ws, req) {
   debug("WebSocket connection established");
 
@@ -46,7 +46,7 @@ app.ws('/sock/elevator', function (ws, req) {
     switch(msg.type) {
       case 'setOutput': 
         debug("Setting output of pin " + msg.data.pin + " to value " + msg.data.value);
-        boardApi.setOutput(msg.data.pin, msg.data.value);
+        elevatorApi.setOutput(msg.data.pin, msg.data.value);
       break;
     }
   })

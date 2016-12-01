@@ -4,9 +4,7 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
-var gpio = require('../board/gpio').GPIO;
-var gpioValues = require('../board/gpio').Values
-var gpioModes = require('../board/gpio').Modes
+var gpio = require('../board/gpio');
 
 var pinout = require('../../config/config.json').pinout;
 var debug = require('debug')('state/monitor');
@@ -20,7 +18,6 @@ var Events = {
 
 var currentState = {
     floors: [0, 0, 0, 0],
-    limit: 0,
     start: 0,
     direction: 0,
     speed: 0
@@ -52,16 +49,16 @@ function initializeMonitoring() {
     debugInit("Initializing GPIO monitoring : ");
 
     var initOutputPinMonitoring = (key) => {
-        debugInit('Setting ' + key + ' ...'); 
+        debugInit('Setting ' + key + ' ...');
         var pin = pinout[key];
 
-        gpio.open(pin, gpioModes.OUTPUT, gpioValues.High);
+        gpio.open(pin, gpio.OUTPUT, gpio.HIGH);
         gpio.monitor(pin, () => {
             debug("New state on pin " + pin);
             currentState[key] = gpio.read(pin);
             stateMonitorObservable.changeState(currentState);
-        });    
-        gpio.write(pin, gpioValues.High);
+        });
+        gpio.write(pin, gpio.HIGH);
     }
 
     debugInit("Output pins...");
@@ -71,19 +68,19 @@ function initializeMonitoring() {
 
 
     debugInit("Input pins...");
-    for(var i of pinout.floors) {
+    for (var i of pinout.floors) {
         ((pin) => {
-            gpio.open(pin, gpioModes.INPUT);
+            gpio.open(pin, gpio.INPUT);
             gpio.monitor(pin, () => {
                 pinIndex = pinout.floors.indexOf(pin);
                 currentState.floors[pinIndex] = gpio.read(pin);
                 debug("Pin " + pinIndex + " changed state");
                 debug(JSON.stringify(currentState));
                 stateMonitorObservable.changeState(currentState);
-            });    
+            });
         })(i);
     }
-    gpio.open(pinout['limit'], gpioModes.OUTPUT);
+    gpio.open(pinout['limit'], gpio.OUTPUT);
     gpio.monitor(pinout['limit'], () => {
         debug("Limit pin changed state");
         currentState['limit'] = gpio.read(pinout['limit']);
@@ -99,5 +96,8 @@ debug(JSON.stringify(currentState));
 
 module.exports = {
     Observable: stateMonitorObservable,
-    Events: Events
+    Events: Events,
+    getCurrentState: () => {
+        return Object.deepClone(currentState);
+    }
 }
