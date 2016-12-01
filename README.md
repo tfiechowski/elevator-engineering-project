@@ -8,11 +8,12 @@ This project is part of my engineering project : **"Controlling the movement of 
 Server works on the RaspberryPi and does control the elevator model from EA541 
 (laboratory in the old building of ETI).
 
+#### Configuration
 
-#### Pin configuration
-
-Pin configuration is in the file `lib/state/pinout.json` - it maps GPIO pins 
+Pin configuration is in the file `config/config.json` - it maps GPIO pins 
 for corresponding elevator's state pins.
+Besides pin configuration, there are mappings for special values like Up/Down,
+Start/Stop and Quick/Slow for output pins.
 
 #### Installation
 
