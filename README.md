@@ -29,6 +29,15 @@ To run the project, just simply execute the command
 
 from the project root directory. The backend is now running on port 8081.
 
+#### How to run tests
+
+To run tests, you should execute the command
+
+`npm run test`
+
+Keep in mind, that most of the test use some features of RaspberryPi, therefore
+tests should be run on it.
+
 #### Code Guidelines
 
 Keep lines no longer than 100 characters.
