@@ -10,11 +10,12 @@ var gpioModes = require('../board/gpio').Modes
 
 var pinout = require('../../config/config.json').pinout;
 var debug = require('debug')('state/monitor');
+var debugInit = require('debug')('state/monitor/initialization');
 
 
 // Variables and Event definitions
 var Events = {
-    "CHANGED": "changed"
+    "CHANGED": "state.changed"
 }
 
 var currentState = {
@@ -37,7 +38,8 @@ util.inherits(StateMonitorObservable, EventEmitter);
 
 // TODO: Only this module can emit change state, maybe dont prototype it? 
 StateMonitorObservable.prototype.changeState = function (newState) {
-    debug("State changed. Emitting event!");
+    debug("State changed, emitting Event! New state:");
+    debug(JSON.stringify(newState));
     this.emit(Events.CHANGED, newState);
 }
 
@@ -47,40 +49,53 @@ var stateMonitorObservable = new StateMonitorObservable();
 // Initialization
 
 function initializeMonitoring() {
-    debug("Initializing GPIO monitoring : ");
+    debugInit("Initializing GPIO monitoring : ");
 
     var initOutputPinMonitoring = (key) => {
-        debug('        Setting ' + key + ' ...'); 
+        debugInit('Setting ' + key + ' ...'); 
         var pin = pinout[key];
 
-        gpio.open(pin, gpioModes.OUTPUT);
+        gpio.open(pin, gpioModes.OUTPUT, gpioValues.High);
+        gpio.write(pin, gpioValues.High);
         gpio.monitor(pin, () => {
+            debug("New state on pin " + pin);
             currentState[key] = gpio.read(pin);
             stateMonitorObservable.changeState(currentState);
         });    
     }
 
-    debug("    Output pins...");
+    debugInit("Output pins...");
     initOutputPinMonitoring('start');
     initOutputPinMonitoring('direction');
     initOutputPinMonitoring('speed');
 
 
-    debug("    Input pins...");
+    debugInit("Input pins...");
     for(var i of pinout.floors) {
         ((pin) => {
             gpio.open(pin, gpioModes.INPUT);
             gpio.monitor(pin, () => {
-                currentState[key] = gpio.read(pin);
+                pinIndex = pinout.floors.indexOf(pin);
+                currentState.floors[pinIndex] = gpio.read(pin);
+                debug("Pin " + pinIndex + " changed state");
+                debug(JSON.stringify(currentState));
                 stateMonitorObservable.changeState(currentState);
             });    
         })(i);
     }
+    gpio.open(pinout['limit'], gpioModes.OUTPUT);
+    gpio.monitor(pinout['limit'], () => {
+        debug("Limit pin changed state");
+        currentState['limit'] = gpio.read(pinout['limit']);
+        stateMonitorObservable.changeState(currentState);
+    });
 
-    debug("    Done!");
+    debugInit("Done!");
 }
 
 initializeMonitoring();
+debug("Start state:");
+debug(JSON.stringify(currentState));
 
 module.exports = {
     Observable: stateMonitorObservable,

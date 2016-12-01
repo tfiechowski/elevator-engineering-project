@@ -1,15 +1,15 @@
 {
     "pinout": {
         "floors": [
+            7,
             11,
-            12,
             13,
             15
         ],
-        "limit": 16,
-        "start": 18,
-        "direction": 22,
-        "speed": 24
+        "limit": 18,
+        "start": 16,
+        "direction": 10,
+        "speed": 22
     },
     "controlConstants": {
         "start": {

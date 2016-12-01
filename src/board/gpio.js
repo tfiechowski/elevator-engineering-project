@@ -28,7 +28,7 @@ function GPIO() {
 
 }
 
-GPIO.open = function(pin, mode) {
+GPIO.open = function(pin, mode, defaultValue) {
     debug("Opening GPIO " + pin + " to: " + mode);
     rpio.open(pin, mode);
 }
@@ -58,11 +58,11 @@ GPIO.OUTPUT = rpio.OUTPUT;
 module.exports = {
     GPIO: GPIO,
     Values: {
-        'High': GPIO.HIGH,
-        'Low': GPIO.LOW
+        'High': rpio.HIGH,
+        'Low': rpio.LOW
     },
     Modes: {
-        'INPUT': GPIO.INPUT,
-        'OUTPUT': GPIO.OUTPUT
+        'INPUT': rpio.INPUT,
+        'OUTPUT': rpio.OUTPUT
     }
 }
