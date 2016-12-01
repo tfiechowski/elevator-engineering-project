@@ -1,15 +1,23 @@
 ws = new WebSocket('ws://' + location.host + '/sock/elevator');
 
+var pinValues = {
+    start: 0,
+    direction: 0,
+    speed: 0
+};
+
 function updateTable(state) {
     console.log("Updating table");
     $('#startValue').html(state.start);
     $('#directionValue').html(state.direction);
     $('#speedValue').html(state.speed);
+    $('#limitValue').html(state.limit);
 
     for (var i = 0; i < 4; i++) {
         $('#floor' + i + 'Value').html(state.floors[i]);
     }
 }
+
 
 ws.onopen = function () {
     // Web Socket is connected, send data using send()
@@ -35,3 +43,38 @@ ws.onclose = function (reason) {
     console.log("Connection is closed...");
     console.log(reason);
 };
+
+function buildMsg(pinKey) {
+    pinValues[pinKey] = (pinValues[pinKey] + 1) % 2;
+
+    return JSON.stringify({
+        type: 'setOutput',
+        data: {
+            pin: pinKey,
+            value: pinValues[pinKey]
+        }
+    });
+}
+
+$(document).ready(function () {
+    $("#startToggle").click(() => {
+        console.log("Sending MSG START");
+        ws.send(buildMsg('start'));
+    });
+    $("#directionToggle").click(() => {
+        console.log("Sending MSG DIRECTION");
+        ws.send(buildMsg('direction'));
+    });
+    $("#speedToggle").click(() => {
+        console.log("Sending MSG SPEED");
+        ws.send(buildMsg('speed'));
+    });
+
+    $(document).keypress(function (e) {
+        switch(e.charCode) {
+            case 113: ws.send(buildMsg('start')); break;
+            case 119: ws.send(buildMsg('direction')); break;
+            case 101: ws.send(buildMsg('speed')); break;
+        }
+    });
+});
