@@ -3,6 +3,10 @@ var gpio = require('../board/gpio').GPIO;
 var gpioValues = require('../board/gpio').Values;
 var pinout = require('../../config/config.json').pinout;
 
+function setStopState() {
+    
+}
+
 function setOutput(output, value) {
     var _val = gpioValues.High;
     if (value === 0) {
@@ -20,6 +24,10 @@ function setOutput(output, value) {
 function goToFloor(destinationFloor) {
     throw new Error("Not yet implemented!");   
 }
+
+
+
+// Initialization of state monitoring
 
 module.exports = {
     setOutput: setOutput,
