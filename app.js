@@ -48,6 +48,12 @@ app.ws('/sock/elevator', function (ws, req) {
         debug("Setting output of pin " + msg.data.pin + " to value " + msg.data.value);
         elevatorApi.setOutput(msg.data.pin, msg.data.value);
       break;
+
+      case 'GO_TO_FLOOR':
+        var destinationFloor = msg.data.value;
+
+        debug("Going to floor" + destinationFloor);
+        elevatorApi.goToFloor(destinationFloor);
     }
   })
 

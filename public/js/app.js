@@ -56,22 +56,39 @@ function buildMsg(pinKey) {
     });
 }
 
+function buildGoToFloorMsg(floor) {
+    return JSON.stringify({
+        type: 'GO_TO_FLOOR',
+        data: {
+            value: floor
+        }
+    });
+}
+
 $(document).ready(function () {
     $("#startToggle").click(() => {
         console.log("Sending MSG START");
         ws.send(buildMsg('start'));
     });
+
     $("#directionToggle").click(() => {
         console.log("Sending MSG DIRECTION");
         ws.send(buildMsg('direction'));
     });
+
     $("#speedToggle").click(() => {
         console.log("Sending MSG SPEED");
         ws.send(buildMsg('speed'));
     });
 
+    $("#goToFloorButton").click(() => {
+        var floor = $("#goToFloorInput").val();
+        console.log("Going to floor: " + floor);
+        ws.send(buildGoToFloorMsg(floor));
+    });
+
     $(document).keypress(function (e) {
-        switch(e.charCode) {
+        switch (e.charCode) {
             case 113: ws.send(buildMsg('start')); break;
             case 119: ws.send(buildMsg('direction')); break;
             case 101: ws.send(buildMsg('speed')); break;
