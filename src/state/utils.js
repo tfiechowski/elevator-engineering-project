@@ -1,4 +1,4 @@
-var controlConstants = require('constants');
+var controlConstants = require('./constants');
 
 /**
  * Transoptor sensor readings for floors:
@@ -33,9 +33,9 @@ function getDirectionToFloorFromCurrentPosition(currentState, destinationFloor) 
     var currentFloor = translateStateToFloor(currentState);
 
     if (currentFloor < destinationFloor) {
-        return controlConstants.DIRECTION.DOWN;
-    } else {
         return controlConstants.DIRECTION.UP;
+    } else {
+        return controlConstants.DIRECTION.DOWN;
     }
 }
 
