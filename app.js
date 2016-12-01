@@ -24,6 +24,7 @@ Object.prototype.deepClone = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+var boardApi = require('./src/board/api');
 app.ws('/sock/elevator', function (ws, req) {
   debug("WebSocket connection established");
 
@@ -33,6 +34,7 @@ app.ws('/sock/elevator', function (ws, req) {
   })
   
   ws.on('message', function (msg) {
+    debug("WS MESSAGE");
     debug("WebSocket message of type: " + (JSON.parse(msg)).type);
 
     try {
@@ -41,7 +43,12 @@ app.ws('/sock/elevator', function (ws, req) {
       debug("Error with parsing, probably just string");
     }
 
-    ws.send(JSON.stringify(msg));
+    switch(msg.type) {
+      case 'setOutput': 
+        debug("Setting output of pin " + msg.data.pin + " to value " + msg.data.value);
+        boardApi.setOutput(msg.data.pin, msg.data.value);
+      break;
+    }
   })
 
 

@@ -56,12 +56,12 @@ function initializeMonitoring() {
         var pin = pinout[key];
 
         gpio.open(pin, gpioModes.OUTPUT, gpioValues.High);
-        gpio.write(pin, gpioValues.High);
         gpio.monitor(pin, () => {
             debug("New state on pin " + pin);
             currentState[key] = gpio.read(pin);
             stateMonitorObservable.changeState(currentState);
         });    
+        gpio.write(pin, gpioValues.High);
     }
 
     debugInit("Output pins...");
