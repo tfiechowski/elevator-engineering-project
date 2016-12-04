@@ -3,6 +3,7 @@ var chai = require('chai');
 var expect = chai.expect; // we are using the "expect" style of Chai
 var stateUtils = require('../../../src/state/utils');
 var interaction = require('../../../src/interaction/interaction');
+var proxy = require('../../../src/events/proxy');
 
 describe('interaction', () => {
     describe('call', () => {
@@ -35,7 +36,7 @@ describe('interaction', () => {
         });
 
         it('callElevator() should emit INTERACTION.CALL event', (done) => {
-            interaction.Observable.on(interaction.EVENTS.CALL, () => {
+            proxy.observable.once(interaction.EVENTS.CALL, () => {
                 done();
             });
 

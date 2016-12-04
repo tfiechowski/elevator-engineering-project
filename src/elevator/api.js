@@ -11,7 +11,7 @@ var stopState = null;
 // Monitoring
 
 // Stopping the elevator on the given stop state (matching floors).
-stateMonitor.Observable.on(stateMonitor.Events.CHANGED, (newState) => {
+stateMonitor.Observable.on(stateMonitor.EVENTS.CHANGED, (newState) => {
     if (stopState === null) {
         return;
     }

@@ -23,7 +23,6 @@ function validateCallBody(body) {
     if(isUndefined(body, 'floor') ||
         isUndefined(body, 'up') ||
         isUndefined(body, 'down') ||
-        isUndefined(body, 'destinationFloors') ||
         isUndefined(body, 'type')) {
         return false;
     }
@@ -38,6 +37,11 @@ router.post('/call', function (req, res, next) {
     if (!validateCallBody(req.body)) {
         debug('Body is invalid!');
         res.sendStatus(400);
+    }
+
+    // Empty arrays are 'erased' when POSTing, we recreate it here.
+    if(req.body['destinationFloors'] === undefined) {
+        req.body['destinationFloors'] = [];
     } 
 
     debug("Calling the elevator from floor " + req.body['floor'] +

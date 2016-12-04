@@ -9,6 +9,7 @@ var app = express();
 var expressWs = require('express-ws')(app);
 var debug = require('debug')('app');
 
+var eventProxy = require('./src/events/proxy');
 var stateMonitor = require('./src/state/monitor');
 var algorithm = require('./src/algorithm/algorithm');
 
@@ -44,10 +45,10 @@ app.ws('/sock/elevator', function (ws, req) {
 
   ws.on('close', function () {
     debug("Connection closed");
-    stateMonitor.Observable.removeListener(stateMonitor.Events.CHANGED, newStateListener);
+    stateMonitor.Observable.removeListener(stateMonitor.EVENTS.CHANGED, newStateListener);
   });
 
-  stateMonitor.Observable.on(stateMonitor.Events.CHANGED, newStateListener);
+  stateMonitor.Observable.on(stateMonitor.EVENTS.CHANGED, newStateListener);
 
   ws.on('message', function (msg) {
     debug("WS MESSAGE");

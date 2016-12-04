@@ -12,7 +12,7 @@ var debugInit = require('debug')('state/monitor/initialization');
 
 
 // Variables and Event definitions
-var Events = {
+var EVENTS = {
     "CHANGED": "state.changed"
 }
 
@@ -38,7 +38,7 @@ util.inherits(StateMonitorObservable, EventEmitter);
 StateMonitorObservable.prototype.changeState = function (newState) {
     debug("State changed, emitting Event! New state:");
     debug(JSON.stringify(newState));
-    this.emit(Events.CHANGED, newState);
+    this.emit(EVENTS.CHANGED, newState);
 
     currentState = newState;
 }
@@ -112,7 +112,7 @@ debug(JSON.stringify(currentState));
 
 module.exports = {
     Observable: stateMonitorObservable,
-    Events: Events,
+    EVENTS: EVENTS,
     getCurrentState: () => {
         return Object.deepClone(currentState);
     },
