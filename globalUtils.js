@@ -9,3 +9,8 @@ Array.isEqual = (array1, array2) => {
 
     return true;
 }
+
+Object.deepClone = function (obj) {
+    // TODO: provide better/faster way to deep clone 
+    return JSON.parse(JSON.stringify(obj));
+}

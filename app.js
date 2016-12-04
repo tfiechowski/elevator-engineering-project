@@ -7,22 +7,23 @@ var bodyParser = require('body-parser');
 
 var app = express();
 var expressWs = require('express-ws')(app);
-//var manager = require('./lib/state/manager')
 var debug = require('debug')('app');
 
-var stateMonitor = require('./src/state/monitor');
+var stateMonitor = require('./src/algorithm/algorithm');
 
-// // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'ejs');
+var algorithm = require('./src/state/monitor');
+
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+var interactions = require('./routes/api/interaction');
+
+// routes
+app.use('/api/interaction', interactions);
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-
-Object.deepClone = function (obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 function isWebsocketConnected(ws) {
   return ws.readyState == 1;
@@ -88,6 +89,7 @@ app.use(function (req, res, next) {
   err.status = 404;
   next(err);
 });
+
 
 // error handlers
 
