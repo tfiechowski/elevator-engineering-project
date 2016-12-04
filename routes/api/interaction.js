@@ -28,23 +28,6 @@ function validateCallBody(body) {
         return false;
     }
 
-    // if(body['floor'] < 0) {
-    //     body['floor'] = 0;
-    // } else if(floor > 3) {
-    //     body['floor'] = 3;
-    // }
-
-    // body['up'] |= body['up']
-    // body['down'] |= body['down']
-
-    // if(!Array.isArray(body['destinationFloors'])) {
-    //     return false;
-    // }
-
-    // if(body['type'] !== "CALL") {
-    //     return false;
-    // }
-
     return true;
 }
 

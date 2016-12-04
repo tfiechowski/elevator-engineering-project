@@ -3,8 +3,8 @@ var expect = chai.expect; // we are using the "expect" style of Chai
 var stateUtils = require('../../../src/state/utils');
 var controlConstants = require('../../../src/state/constants');
 
-describe('elevator', () => {
-    describe('floors', () => {
+describe('state', () => {
+    describe('utils', () => {
         it('translateFloorToState', (done) => {
 
             var arrayEquality = (array1, array2) => {
@@ -36,15 +36,6 @@ describe('elevator', () => {
             done();
         });
 
-        it('translateStateToFloor', (done) => {
-            expect(stateUtils.translateStateToFloor({floors:[0,0,1,1]})).to.equal(0);
-            expect(stateUtils.translateStateToFloor({floors:[0,1,1,1]})).to.equal(1);
-            expect(stateUtils.translateStateToFloor({floors:[1,0,1,1]})).to.equal(2);
-            expect(stateUtils.translateStateToFloor({floors:[1,1,1,1]})).to.equal(3);
-            
-            done();
-        });
-
         it('getDirectionToFloor', (done) => {
             expect(stateUtils.getDirectionToFloor({floors:[0,0,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
             expect(stateUtils.getDirectionToFloor({floors:[0,1,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
@@ -54,9 +45,8 @@ describe('elevator', () => {
             expect(stateUtils.getDirectionToFloor({floors:[1,0,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
             expect(stateUtils.getDirectionToFloor({floors:[0,1,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
 
-
             done();
-        })
+        });
     });
 });
 
