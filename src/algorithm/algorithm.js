@@ -11,7 +11,8 @@ var elevator = require('../elevator/api');
 debug("Initializing elevator control algorithm");
 
 interaction.on(interactionEvents.CALL, (data) => {
-    debug('Recieved CALL event: ' + JSON.stringify(data));
+    debug('Recieved CALL event: ');
+    debug(JSON.stringify(data));
 
     elevator.goToFloor(data.floor);
 });
