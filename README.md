@@ -25,7 +25,7 @@ Only thing you need to do is to call
 
 To run the project, just simply execute the command
 
-`node ./bin/www`
+`npm start`
 
 from the project root directory. The backend is now running on port 8081.
 
