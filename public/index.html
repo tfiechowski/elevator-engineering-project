@@ -11,6 +11,7 @@
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="stylesheets/bootstrap.css">-->
 
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.6.0/redux.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
@@ -28,7 +29,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <table class="table">
+                <table class="table table-responsive">
                     <thead>
                         <th>Pin - nazwa</th>
                         <th>Pin - numer</th>
@@ -40,19 +41,19 @@
                             <td>Start</td>
                             <td>#</td>
                             <td id="startValue"></td>
-                            <td><button class="button" id="startToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="startToggle">Toggle</button></td>
                         </tr>
                         <tr>
                             <td>Direction</td>
                             <td>#</td>
                             <td id="directionValue"></td>
-                            <td><button class="button" id="directionToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="directionToggle">Toggle</button></td>
                         </tr>
                         <tr>
                             <td>Speed</td>
                             <td>#</td>
                             <td id="speedValue"></td>
-                            <td><button class="button" id="speedToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="speedToggle">Toggle</button></td>
                         </tr>
                         <tr>
                             <td>Limit</td>
@@ -85,7 +86,7 @@
             <div class="col-md-6">
                 <form>
                     <div class="input-group">
-                        <input type="number" class="form-control" placeholder="Destination floor" id="goToFloorInput">
+                        <input type="number" class="form-control" placeholder="Destination floor" value="1" id="goToFloorInput">
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="button" id="goToFloorButton">
                                 Go!
@@ -102,5 +103,4 @@
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-default" id="goToFloor">Go to floor</button>
 </body>

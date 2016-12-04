@@ -6,11 +6,22 @@ var pinValues = {
     speed: 0
 };
 
+function translatePinValue(type, value) {
+    switch(type) {
+        case 'start': 
+            return value == 0 ? "START" : "STOP"
+        case 'direction':
+            return value == 0 ? "UP" : "DOWN";
+        case 'speed':
+            return value == 0 ? "FAST" : "SLOW";
+    }
+}
+
 function updateTable(state) {
     console.log("Updating table");
-    $('#startValue').html(state.start);
-    $('#directionValue').html(state.direction);
-    $('#speedValue').html(state.speed);
+    $('#startValue').html(translatePinValue('start', state.start));
+    $('#directionValue').html(translatePinValue('direction', state.direction));
+    $('#speedValue').html(translatePinValue('speed', state.speed));
     $('#limitValue').html(state.limit);
 
     for (var i = 0; i < 4; i++) {
