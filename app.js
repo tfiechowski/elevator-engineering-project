@@ -9,10 +9,8 @@ var app = express();
 var expressWs = require('express-ws')(app);
 var debug = require('debug')('app');
 
-var stateMonitor = require('./src/algorithm/algorithm');
-
-var algorithm = require('./src/state/monitor');
-
+var stateMonitor = require('./src/state/monitor');
+var algorithm = require('./src/algorithm/algorithm');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
