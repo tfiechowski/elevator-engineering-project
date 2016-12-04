@@ -98,6 +98,32 @@ $(document).ready(function () {
         ws.send(buildGoToFloorMsg(floor));
     });
 
+    $("#interactionCallButton").click(() => {
+        var destinationFloors = [];
+
+        for(var i = 0 ; i < 4; i++) {
+            if($("#interactionCallFloor" + i).is(":checked")) {
+                destinationFloors.push(i);
+            }
+        }
+
+        var callRequest = {
+            type: "CALL",
+            floor: $("#interactionCallFloor").val(),
+            up: $("#interactionCallUp").is(":checked"),
+            down: $("#interactionCallDown").is(":checked"),
+            destinationFloors: destinationFloors
+        }
+        
+        console.log("Interaction.Call request:");
+        console.log(callRequest);
+
+        $.post("/api/interaction/call", callRequest).done((response) => {
+            console.log("/api/interaction/call response:");
+            console.log(response);
+        })
+    });
+
     $(document).keypress(function (e) {
         switch (e.charCode) {
             case 113: ws.send(buildMsg('start')); break;
