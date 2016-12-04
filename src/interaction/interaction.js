@@ -61,8 +61,9 @@ function processCallRequest(req) {
 util.inherits(UserInteractionObservable, EventEmitter);
  
 UserInteractionObservable.prototype.callElevator = function (data) {
-    debug("Emitting " + EVENTS.CALL + " event");
     processCallRequest(data);
+    
+    debug("Emitting " + EVENTS.CALL + " event");
     return this.emit(EVENTS.CALL, data);
 }
 

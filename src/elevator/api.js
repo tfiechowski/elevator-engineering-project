@@ -114,13 +114,15 @@ function setSpeed(value) {
  * @param {Number} destinationFloor floor that elevator will go to.
  */
 function goToFloor(destinationFloor) {
+    debug("Going to floor: " + destinationFloor);
+
     stop();
 
     setStopFloor(destinationFloor);
 
     var currentState = stateMonitor.getCurrentState();
 
-    var destinationDirection = stateUtils.getDirectionToFloorFromCurrentPosition(currentState, destinationFloor);
+    var destinationDirection = stateUtils.getDirectionToFloor(currentState, destinationFloor);
 
     setDirection(destinationDirection);
     start();

@@ -45,14 +45,14 @@ describe('elevator', () => {
             done();
         });
 
-        it('getDirectionToFloorFromCurrentPosition', (done) => {
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[0,0,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[0,1,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[1,0,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
+        it('getDirectionToFloor', (done) => {
+            expect(stateUtils.getDirectionToFloor({floors:[0,0,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
+            expect(stateUtils.getDirectionToFloor({floors:[0,1,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
+            expect(stateUtils.getDirectionToFloor({floors:[1,0,1,1]}, 3)).to.equal(controlConstants.DIRECTION.UP);
             
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[1,1,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[1,0,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
-            expect(stateUtils.getDirectionToFloorFromCurrentPosition({floors:[0,1,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
+            expect(stateUtils.getDirectionToFloor({floors:[1,1,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
+            expect(stateUtils.getDirectionToFloor({floors:[1,0,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
+            expect(stateUtils.getDirectionToFloor({floors:[0,1,1,1]}, 0)).to.equal(controlConstants.DIRECTION.DOWN);
 
 
             done();

@@ -38,12 +38,10 @@ router.post('/call', function (req, res, next) {
         res.sendStatus(400);
     } 
 
-    var floor = req.body['floor'];
-    var up = req.body['up'];
-    var down = req.body['down'];
-    var destinationFloors = req.body['destinationFloors'];
-        
-    debug("Calling the elevator from floor " + floor + ". Up: " + up + " Down: " + down + "\tDestination floors: " + destinationFloors);
+    debug("Calling the elevator from floor " + req.body['floor'] +
+        "\tUp: " + req.body['up'] + 
+        "\tDown: " + req.body['down'] + 
+        "\tDestination floors: " + req.body['destinationFloors']);
 
     if (interaction.Observable.callElevator(req.body)) {
         res.sendStatus(200);

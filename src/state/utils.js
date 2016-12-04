@@ -29,7 +29,7 @@ function translateStateToFloor(state) {
     return parseInt(state.floors.join("").slice(0, 2), 2);
 }
 
-function getDirectionToFloorFromCurrentPosition(currentState, destinationFloor) {
+function getDirectionToFloor(currentState, destinationFloor) {
     var currentFloor = translateStateToFloor(currentState);
 
     if (currentFloor < destinationFloor) {
@@ -119,5 +119,5 @@ module.exports = {
     compareStatesFloors: compareStatesFloors,
     translateFloorToState: translateFloorToState,
     translateStateToFloor: translateStateToFloor,
-    getDirectionToFloorFromCurrentPosition: getDirectionToFloorFromCurrentPosition
+    getDirectionToFloor: getDirectionToFloor
 }
