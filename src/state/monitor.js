@@ -18,6 +18,7 @@ var Events = {
 
 var currentState = {
     floors: [0, 0, 0, 0],
+    limit: 0,
     start: 0,
     direction: 0,
     speed: 0
@@ -38,6 +39,8 @@ StateMonitorObservable.prototype.changeState = function (newState) {
     debug("State changed, emitting Event! New state:");
     debug(JSON.stringify(newState));
     this.emit(Events.CHANGED, newState);
+
+    currentState = newState;
 }
 
 var stateMonitorObservable = new StateMonitorObservable();
@@ -90,6 +93,19 @@ function initializeMonitoring() {
     debugInit("Done!");
 }
 
+function forceStateRefresh() {
+    currentState.start = gpio.read(pinout['start']);
+    currentState.direction = gpio.read(pinout['direction']);
+    currentState.speed = gpio.read(pinout['speed']);
+
+    for(var pin of pinout.floors) {
+        var pinIndex = pinout.floors.indexOf(pin);
+        currentState.floors[pinIndex] = gpio.read(pin);
+    }
+
+    stateMonitorObservable.changeState(currentState);
+}
+
 initializeMonitoring();
 debug("Start state:");
 debug(JSON.stringify(currentState));
@@ -99,5 +115,6 @@ module.exports = {
     Events: Events,
     getCurrentState: () => {
         return Object.deepClone(currentState);
-    }
+    },
+    forceStateRefresh: forceStateRefresh
 }

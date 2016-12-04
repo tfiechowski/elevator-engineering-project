@@ -12,7 +12,7 @@ var stopState = null;
 
 // Stopping the elevator on the given stop state (matching floors).
 stateMonitor.Observable.on(stateMonitor.Events.CHANGED, (newState) => {
-    if(stopState === null) {
+    if (stopState === null) {
         return;
     }
 
@@ -29,17 +29,20 @@ stateMonitor.Observable.on(stateMonitor.Events.CHANGED, (newState) => {
  * @return {Boolean} true if state was set, false otherwise
  */
 function setStopFloor(stopFloor) {
-    if(typeof stopFloor !== "number") {
+    stopFloor = stopFloor | 0;
+    if (typeof stopFloor !== "number") {
+        debug("setStopFloor: Stop floor is not a number!");
         return false;
     }
 
     if (stopFloor < 0) {
         stopFloor = 0;
-    } else if(stopFloor > 3) {
+    } else if (stopFloor > 3) {
         stopFloor = 3;
     }
 
-    var destinationFloorState = stateUtils.translateFloorToState(destinationFloor);
+    var destinationFloorState = stateUtils.translateFloorToState(stopFloor);
+    debug("Stop state floors: [" + destinationFloorState + "]");
 
     stopState = { floors: destinationFloorState };
     return true;
@@ -49,6 +52,7 @@ function setStopFloor(stopFloor) {
  * This function resets the stop state.
  */
 function resetStopState() {
+    debug("Resetting stop state");
     stopState = null;
 }
 
@@ -60,19 +64,19 @@ function resetStopState() {
  */
 function setOutput(output, value) {
     debug("SetOutput: " + output + " (pin: " + pinout[output] + ") with value: " + value);
-    
+
     var _val = gpio.convertToPinValue(value);
     switch (output) {
-        case 'start': 
+        case 'start':
             gpio.write(pinout['start'], _val); break;
 
-        case 'direction': 
+        case 'direction':
             gpio.write(pinout['direction'], _val); break;
 
-        case 'speed': 
+        case 'speed':
             gpio.write(pinout['speed'], _val); break;
 
-        default: 
+        default:
             debug('setOutput: no output pin of type: ' + output);
     }
 }
@@ -117,7 +121,7 @@ function goToFloor(destinationFloor) {
     var currentState = stateMonitor.getCurrentState();
 
     var destinationDirection = stateUtils.getDirectionToFloorFromCurrentPosition(currentState, destinationFloor);
-    
+
     setDirection(destinationDirection);
     start();
 }

@@ -80,8 +80,9 @@ function validateStateObject(state) {
     if (!checkValue(state, 'start')) return false;
     if (!checkValue(state, 'direction')) return false;
     if (!checkValue(state, 'speed')) return false;
+    if (!checkValue(state, 'limit')) return false;
 
-    if (Object.keys(state).length !== 4) return false;
+    if (Object.keys(state).length !== 5) return false;
 
     return true;
 }
