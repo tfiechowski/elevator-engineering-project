@@ -1,4 +1,4 @@
-Array.prototype.isEqual = (array1, array2) => {
+Array.isEqual = (array1, array2) => {
     if (array1.length != array2.length)
         return false;
 

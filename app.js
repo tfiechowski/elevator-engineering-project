@@ -24,15 +24,32 @@ Object.deepClone = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function isWebsocketConnected(ws) {
+  return ws.readyState == 1;
+}
+
 var elevatorApi = require('./src/elevator/api');
 app.ws('/sock/elevator', function (ws, req) {
   debug("WebSocket connection established");
+  debug("Sending initial state");
+  ws.send(JSON.stringify(stateMonitor.getCurrentState()));
 
-  stateMonitor.Observable.on(stateMonitor.Events.CHANGED, (newState) => {
+  var newStateListener = (newState) => {
     debug("Sending new state");
-    ws.send(JSON.stringify(newState));
-  })
-  
+    debug(ws.readyState);
+
+    if (isWebsocketConnected(ws)) {
+      ws.send(JSON.stringify(newState));
+    }
+  }
+
+  ws.on('close', function () {
+    debug("Connection closed");
+    stateMonitor.Observable.removeListener(stateMonitor.Events.CHANGED, newStateListener);
+  });
+
+  stateMonitor.Observable.on(stateMonitor.Events.CHANGED, newStateListener);
+
   ws.on('message', function (msg) {
     debug("WS MESSAGE");
     debug("WebSocket message of type: " + (JSON.parse(msg)).type);
@@ -43,11 +60,11 @@ app.ws('/sock/elevator', function (ws, req) {
       debug("Error with parsing, probably just string");
     }
 
-    switch(msg.type) {
-      case 'setOutput': 
+    switch (msg.type) {
+      case 'setOutput':
         debug("Setting output of pin " + msg.data.pin + " to value " + msg.data.value);
         elevatorApi.setOutput(msg.data.pin, msg.data.value);
-      break;
+        break;
 
       case 'GO_TO_FLOOR':
         var destinationFloor = msg.data.value;
@@ -55,12 +72,9 @@ app.ws('/sock/elevator', function (ws, req) {
         debug("Going to floor" + destinationFloor);
         elevatorApi.goToFloor(destinationFloor);
     }
-  })
+  });
 
-
-  ws.on('close', function () {
-    debug("Connection closed");
-  })
+  stateMonitor.forceStateRefresh();
 });
 
 // app.use(express.static(path.join(__dirname, '../public')));
