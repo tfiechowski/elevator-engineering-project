@@ -20,11 +20,13 @@ var eventProxyObservable = new EventProxyObservable();
  * @param {Object} events object with events defined, that will be proxied
  */
 function proxyEvents(observable, events) {
-    for(var key in events) {
-        observable.on(events[key], (data) => {
-            debug("Proxying " + events[key]);
-            eventProxyObservable.emit(events[key], data);
-        });
+    for (var _key in events) {
+        ((key) => {
+            observable.on(events[key], (data) => {
+                debug("Proxying " + events[key]);
+                eventProxyObservable.emit(events[key], data);
+            });
+        })(_key);
     }
 }
 

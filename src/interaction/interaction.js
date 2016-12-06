@@ -3,12 +3,19 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 var EVENTS = { 
-    CALL: "INTERACTION.CALL"
+    CALL: "INTERACTION.CALL",
+    CONSOLE_CHANGE: "INTERACTION.CONSOLE_CHANGE"
 }
+
+// Observable
 
 function UserInteractionObservable() {
     EventEmitter.call(this);
 }
+
+util.inherits(UserInteractionObservable, EventEmitter);
+
+var userInteractionObservable = new UserInteractionObservable();
 
 /**
  * This object represents user interaction buttons state at the different 
@@ -30,6 +37,15 @@ function getButtonsState() {
 }
 
 /**
+ * This function emits the CONSOLE_CHANGE event. It should be triggered after processing
+ * CALL request - when console buttons change.
+ */
+function emitConsoleChange() {
+    debug("Emitting " + EVENTS.CONSOLE_CHANGE + "event");
+    userInteractionObservable.emit(EVENTS.CONSOLE_CHANGE, getButtonsState());
+}
+
+/**
  * This function processes the CALL request and updates corresponding 
  * values in the 'buttonStates' object.
  * 
@@ -38,11 +54,11 @@ function getButtonsState() {
 function processCallRequest(req) {
     var floor = req.floor;
 
-    if(req.up) {
+    if(req.up == true) {
         buttonStates.up[floor] = 1;
     }
 
-    if(req.down) {
+    if(req.down == true) {
         buttonStates.down[floor] = 1;
     }
 
@@ -54,11 +70,8 @@ function processCallRequest(req) {
     }
 
     debug("Processed CALL request. New ButtonsState: " + JSON.stringify(buttonStates));
+    emitConsoleChange();
 }
-
-// Observable
-
-util.inherits(UserInteractionObservable, EventEmitter);
  
 UserInteractionObservable.prototype.callElevator = function (data) {
     processCallRequest(data);
@@ -67,7 +80,7 @@ UserInteractionObservable.prototype.callElevator = function (data) {
     return this.emit(EVENTS.CALL, data);
 }
 
-var userInteractionObservable = new UserInteractionObservable();
+
 
 
 module.exports = {

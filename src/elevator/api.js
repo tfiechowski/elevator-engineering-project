@@ -1,4 +1,4 @@
-var debug = require('debug')('board:api');
+var debug = require('debug')('elevator:api');
 var gpio = require('../board/gpio');
 var pinout = require('../../config/config.json').pinout;
 var stateUtils = require('../state/utils');
@@ -68,13 +68,9 @@ function setOutput(output, value) {
     var _val = gpio.convertToPinValue(value);
     switch (output) {
         case 'start':
-            gpio.write(pinout['start'], _val); break;
-
         case 'direction':
-            gpio.write(pinout['direction'], _val); break;
-
         case 'speed':
-            gpio.write(pinout['speed'], _val); break;
+            gpio.write(pinout[output], _val); break;
 
         default:
             debug('setOutput: no output pin of type: ' + output);

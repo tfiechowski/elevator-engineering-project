@@ -84,12 +84,13 @@ function initializeMonitoring() {
             });
         })(i);
     }
-    gpio.open(pinout['limit'], gpio.OUTPUT);
-    gpio.monitor(pinout['limit'], () => {
-        debug("Limit pin changed state");
-        currentState['limit'] = gpio.read(pinout['limit']);
-        stateMonitorObservable.changeState(currentState);
-    });
+    
+    // gpio.open(pinout['limit'], gpio.OUTPUT);
+    // gpio.monitor(pinout['limit'], () => {
+    //     debug("Limit pin changed state");
+    //     currentState['limit'] = gpio.read(pinout['limit']);
+    //     stateMonitorObservable.changeState(currentState);
+    // });
 
     debugInit("Done!");
 }
