@@ -1,4 +1,4 @@
-var debug = require('debug')('api/interaction');
+var debug = require('debug')('api:interaction');
 var express = require('express');
 var router = express.Router();
 var interaction = require('../../src/interaction/interaction');

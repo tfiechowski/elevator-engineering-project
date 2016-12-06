@@ -7,9 +7,9 @@
             15
         ],
         "limit": 18,
-        "start": 16,
+        "start": 22,
         "direction": 10,
-        "speed": 22
+        "speed": 16
     },
     "controlConstants": {
         "start": {

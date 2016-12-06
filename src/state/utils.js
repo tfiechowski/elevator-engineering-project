@@ -1,5 +1,5 @@
 var controlConstants = require('./constants');
-var debug = require('debug')('state/utils');
+var debug = require('debug')('state:utils');
 /**
  * Transoptor sensor readings for floors:
  * 

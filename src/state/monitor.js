@@ -7,13 +7,14 @@ var util = require('util');
 var gpio = require('../board/gpio');
 
 var pinout = require('../../config/config.json').pinout;
-var debug = require('debug')('state/monitor');
-var debugInit = require('debug')('state/monitor/initialization');
+var debug = require('debug')('state:monitor');
+var debugInit = require('debug')('state:monitor:init');
 
 
 // Variables and Event definitions
 var EVENTS = {
-    "CHANGED": "state.changed"
+    "CHANGED": "STATE.CHANGED",
+    "FLOOR_CHANGED": "STATE.FLOOR_CHANGED"
 }
 
 var currentState = {

@@ -1,4 +1,4 @@
-var debug = require('debug')('interaction/interaction');
+var debug = require('debug')('interaction');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 

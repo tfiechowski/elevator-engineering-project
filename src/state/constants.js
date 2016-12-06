@@ -1,4 +1,4 @@
-var debug = require('debug')('state/constants/initialization');
+var debug = require('debug')('state:constants:init');
 var controlConstants = require('../../config/config.json').controlConstants;
 var gpio = require('../board/gpio');
 

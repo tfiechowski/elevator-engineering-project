@@ -1,6 +1,6 @@
 // This layer provides an abstraction to the GPIO ports.
 
-var debug = require('debug')('board/gpio');
+var debug = require('debug')('board:gpio');
 var rpio;
 
 try {

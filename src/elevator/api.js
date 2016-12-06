@@ -1,4 +1,4 @@
-var debug = require('debug')('board/api');
+var debug = require('debug')('board:api');
 var gpio = require('../board/gpio');
 var pinout = require('../../config/config.json').pinout;
 var stateUtils = require('../state/utils');
@@ -125,7 +125,13 @@ function goToFloor(destinationFloor) {
     var destinationDirection = stateUtils.getDirectionToFloor(currentState, destinationFloor);
 
     setDirection(destinationDirection);
-    start();
+
+    // Timeout is needed for keys inside the elevator to change, and for voltages to stabilise.
+    var timeout = 10;
+    setTimeout(() => {
+        debug("Starting elevator after " + timeout + " after setting direction pin");
+        start();
+    }, timeout);
 }
 
 /**
