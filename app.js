@@ -12,6 +12,9 @@ var expressWs = require('express-ws')(app);
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+// Initialize event proxy
+require('./src/events/proxy');
+
 // API & WS setup
 debug("Initializing API and WebSocket endpoints");
 

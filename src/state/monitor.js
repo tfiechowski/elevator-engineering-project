@@ -9,6 +9,7 @@ var gpio = require('../board/gpio');
 var pinout = require('../../config/config.json').pinout;
 var debug = require('debug')('state:monitor');
 var debugInit = require('debug')('state:monitor:init');
+var stateUtils = require('./utils');
 
 
 // Variables and Event definitions
@@ -25,6 +26,7 @@ var currentState = {
     speed: 0
 }
 
+var lastFloor = -1;
 
 
 // Monitor Observable:
@@ -84,7 +86,7 @@ function initializeMonitoring() {
             });
         })(i);
     }
-    
+
     // gpio.open(pinout['limit'], gpio.OUTPUT);
     // gpio.monitor(pinout['limit'], () => {
     //     debug("Limit pin changed state");
@@ -100,12 +102,33 @@ function forceStateRefresh() {
     currentState.direction = gpio.read(pinout['direction']);
     currentState.speed = gpio.read(pinout['speed']);
 
-    for(var pin of pinout.floors) {
+    for (var pin of pinout.floors) {
         var pinIndex = pinout.floors.indexOf(pin);
         currentState.floors[pinIndex] = gpio.read(pin);
     }
 
     stateMonitorObservable.changeState(currentState);
+}
+
+function checkFloorChange() {
+    stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
+
+        // We check floors[2] becouse this transoptor is in HIGH state on every floor.
+        if (newState.floors[2] === 1) {
+            var timeout = 15;
+
+            setTimeout(() => {
+                var currentFloor = stateUtils.translateStateToFloor(getCurrentState());
+
+                if(currentFloor != lastFloor) {
+                    lastFloor = currentFloor;
+
+                    stateMonitorObservable.emit(EVENTS.FLOOR_CHANGED, currentFloor);
+                }
+
+            }, timeout);
+        }
+    });
 }
 
 initializeMonitoring();

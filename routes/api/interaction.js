@@ -52,6 +52,7 @@ router.post('/call', function (req, res, next) {
     if (interaction.Observable.callElevator(req.body)) {
         res.sendStatus(200);
     } else {
+        debug("Internal server error");
         res.sendStatus(500);
     }
 });

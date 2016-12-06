@@ -30,6 +30,11 @@ function updateTable(state) {
     }
 }
 
+function updateLastFloor(lastFloor) {
+    console.log("New last floor: " + lastFloor);
+
+    $("#lastFloor").html(lastFloor);
+}
 
 ws.onopen = function () {
     // Web Socket is connected, send data using send()
@@ -46,6 +51,7 @@ ws.onmessage = function (evt) {
 
     switch (message.type) {
         case 'STATE.CHANGED': updateTable(message.data); break;
+        case 'STATE.FLOOR_CHANGED': updateConsole(message.data); break;
         case 'INTERACTION.CONSOLE_CHANGE': console.log("Console changed" + JSON.stringify(message.data));
     }
 };

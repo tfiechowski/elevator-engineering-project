@@ -41,7 +41,7 @@ function getButtonsState() {
  * CALL request - when console buttons change.
  */
 function emitConsoleChange() {
-    debug("Emitting " + EVENTS.CONSOLE_CHANGE + "event");
+    debug("Emitting " + EVENTS.CONSOLE_CHANGE + " event");
     userInteractionObservable.emit(EVENTS.CONSOLE_CHANGE, getButtonsState());
 }
 
