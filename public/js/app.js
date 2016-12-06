@@ -1,4 +1,5 @@
-ws = new WebSocket('ws://' + location.host + '/sock/elevator');
+ws = new WebSocket('ws://' + location.host + '/ws/elevator');
+//ws = new WebSocket('ws://' + location.host + '/ws/interaction');
 
 var pinValues = {
     start: 0,
@@ -7,8 +8,8 @@ var pinValues = {
 };
 
 function translatePinValue(type, value) {
-    switch(type) {
-        case 'start': 
+    switch (type) {
+        case 'start':
             return value == 0 ? "START" : "STOP"
         case 'direction':
             return value == 0 ? "UP" : "DOWN";
@@ -39,14 +40,14 @@ ws.onopen = function () {
 var tableBody = $("#tableBody");
 
 ws.onmessage = function (evt) {
-    var received_msg = JSON.parse(evt.data);
+    var message = JSON.parse(evt.data);
 
-    console.log("New state is recieved : ");
-    console.log(received_msg);
+    console.log("New message of type  " + message.type + " is recieved.");
 
-    updateTable(received_msg);
-
-    //changeElevatorState(received_msg);
+    switch (message.type) {
+        case 'STATE.CHANGED': updateTable(message.data); break;
+        case 'INTERACTION.CONSOLE_CHANGE': console.log("Console changed" + JSON.stringify(message.data));
+    }
 };
 
 ws.onclose = function (reason) {
@@ -55,54 +56,46 @@ ws.onclose = function (reason) {
     console.log(reason);
 };
 
-function buildMsg(pinKey) {
-    pinValues[pinKey] = (pinValues[pinKey] + 1) % 2;
+function toggleOutput(type) {
+    pinValues[type] = (pinValues[type] + 1) % 2;
 
-    return JSON.stringify({
-        type: 'setOutput',
-        data: {
-            pin: pinKey,
-            value: pinValues[pinKey]
-        }
+    $.post('/api/elevator/setOutput', {
+        type: type,
+        value: pinValues[type]
     });
 }
 
-function buildGoToFloorMsg(floor) {
-    return JSON.stringify({
-        type: 'GO_TO_FLOOR',
-        data: {
-            value: floor
-        }
-    });
+function goToFloor(floor) {
+    $.post('/api/elevator/goToFloor/' + floor);
 }
 
 $(document).ready(function () {
     $("#startToggle").click(() => {
         console.log("Sending MSG START");
-        ws.send(buildMsg('start'));
+        toggleOutput('start');
     });
 
     $("#directionToggle").click(() => {
         console.log("Sending MSG DIRECTION");
-        ws.send(buildMsg('direction'));
+        toggleOutput('direction');
     });
 
     $("#speedToggle").click(() => {
         console.log("Sending MSG SPEED");
-        ws.send(buildMsg('speed'));
+        toggleOutput('speed');
     });
 
     $("#goToFloorButton").click(() => {
         var floor = $("#goToFloorInput").val();
         console.log("Going to floor: " + floor);
-        ws.send(buildGoToFloorMsg(floor));
+        goToFloor(floor);
     });
 
     $("#interactionCallButton").click(() => {
         var destinationFloors = [];
 
-        for(var i = 0 ; i < 4; i++) {
-            if($("#interactionCallFloor" + i).is(":checked")) {
+        for (var i = 0; i < 4; i++) {
+            if ($("#interactionCallFloor" + i).is(":checked")) {
                 destinationFloors.push(i);
             }
         }
@@ -110,11 +103,11 @@ $(document).ready(function () {
         var callRequest = {
             type: "CALL",
             floor: $("#interactionCallFloor").val(),
-            up: $("#interactionCallUp").is(":checked"),
-            down: $("#interactionCallDown").is(":checked"),
+            up: $("#interactionCallUp").is(":checked") == true ? 1 : 0,
+            down: $("#interactionCallDown").is(":checked") == true ? 1 : 0,
             destinationFloors: destinationFloors
         }
-        
+
         console.log("Interaction.Call request:");
         console.log(callRequest);
 
@@ -126,9 +119,9 @@ $(document).ready(function () {
 
     $(document).keypress(function (e) {
         switch (e.charCode) {
-            case 113: ws.send(buildMsg('start')); break;
-            case 119: ws.send(buildMsg('direction')); break;
-            case 101: ws.send(buildMsg('speed')); break;
+            case 113: toggleOutput('start'); break;
+            case 119: toggleOutput('direction'); break;
+            case 101: toggleOutput('speed'); break;
         }
     });
 });
