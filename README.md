@@ -8,6 +8,8 @@ This project is part of my engineering project : **"Controlling the movement of 
 Server works on the RaspberryPi and does control the elevator model from EA541 
 (laboratory in the old building of ETI).
 
+Wiktor Kobiela is a co-author, responsible for the hardware part.
+
 #### Configuration
 
 Pin configuration is in the file `config/config.json` - it maps GPIO pins 
