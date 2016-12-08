@@ -52,8 +52,27 @@ function endpointHandler(ws, req) {
     debug("Sending initial state");
 
     var stateListener = createStateListener(ws);
-    var floorChangeListener = createFloorChangeListener(ws);
-    var consoleChangeListener = createConsoleChangeListener(ws);
+    var floorChangeListener = (newConsoleState) => {
+        debug("Sending new console state: " + JSON.stringify(newConsoleState));
+
+        if (isWebsocketConnected(ws)) {
+            ws.send(JSON.stringify({
+                type: userInteraction.EVENTS.CONSOLE_CHANGE,
+                data: newConsoleState
+            }));
+        }
+    };
+
+    var consoleChangeListener = (newConsoleState) => {
+        debug("Sending new console state: " + JSON.stringify(newConsoleState));
+
+        if (isWebsocketConnected(ws)) {
+            ws.send(JSON.stringify({
+                type: userInteraction.EVENTS.CONSOLE_CHANGE,
+                data: newConsoleState
+            }));
+        }
+    };
 
     ws.on('close', () => {
         debug("Websocket connection closed.");
@@ -76,6 +95,9 @@ function endpointHandler(ws, req) {
     // At connection, we force monitor to refresh state. It will trigger STATE.CHANGED event
     // and will send a message to connected client with current state.
     stateMonitor.forceStateRefresh();
+    userInteraction.emitConsoleChange();
+
+    //userInteraction.Observable.emit(userInteraction.EVENTS.CONSOLE_CHANGE, userInteraction.getButtonsState());
 }
 
 module.exports = (router) => {

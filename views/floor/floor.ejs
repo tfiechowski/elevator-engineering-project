@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+    <script src="/js/floor/floor.js"></script>
+</head>
+<style>
+button {
+    color: black;
+}
+</style>
+<body class="container">
+    <main>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                    <h2>You are on the floor # 
+                        <span id="currentFloor"><%= floor %></span>
+                    </h2>
+            </div>
+
+            <div class="col-md-6">
+                <div class="jumbotron">
+
+                    <% if(floor < 3){ %>
+                        <div class="col-xs-12 text-center">
+                            <button id="buttonUp" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveUp}>
+                                <span class="glyphicon glyphicon-arrow-up"></span>
+                            </button>
+                        </div>
+                    <% } %>
+
+                    <% if(floor > 0){ %>
+                        <div class="col-xs-12 text-center">
+                            <button id="buttonDown" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveDown}>
+                                <span class="glyphicon glyphicon-arrow-down"></span>
+                            </button>
+                        </div>
+                    <% } %>    
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="jumbotron">
+                    <div class="row">
+                        <div class="col-xs-6 text-center">
+                             <button id="console3" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveDown}>
+                                3
+                            </button>
+                        </div>
+                        <div class="col-xs-6 text-center">
+                            <button id="console2" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveDown}>
+                                2
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 text-center">
+                           <button id="console1" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveDown}>
+                                1
+                            </button>
+                        </div>
+                        <div class="col-xs-6 text-center">
+                            <button id="console0" type="button" class="btn btn-default eti-btn-emulator" onClick={this.moveDown}>
+                                0
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+
+
+
+                    

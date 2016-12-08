@@ -6,11 +6,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+
 var app = express();
 var expressWs = require('express-ws')(app);
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+app.set('view engine', 'ejs');  
 
 // Initialize event proxy
 require('./src/events/proxy');
@@ -24,6 +27,18 @@ app.use('/ws', require('./routes/ws/elevator')(app._router));
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+app.get('/floor/:floor', (req, res) => {
+  var floor = req.params.floor; 
+
+  if(floor < 0) {
+    floor = 0;
+  } else if(floor > 3) {
+    floor = 3;
+  }
+
+  res.render('floor/floor', { floor: floor });
+})
 
 app.use(express.static(path.join(__dirname, 'public'), {
   dotfiles: 'allow'

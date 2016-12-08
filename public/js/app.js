@@ -1,6 +1,16 @@
 ws = new WebSocket('ws://' + location.host + '/ws/elevator');
 //ws = new WebSocket('ws://' + location.host + '/ws/interaction');
 
+ws.onopen = function () {
+    console.log("Web Socket is connected");
+};
+
+ws.onclose = function (reason) {
+    // websocket is     closed.
+    console.log("Connection is closed...");
+    console.log(reason);
+};
+
 var pinValues = {
     start: 0,
     direction: 0,
@@ -36,11 +46,6 @@ function updateLastFloor(lastFloor) {
     $("#lastFloor").html(lastFloor);
 }
 
-ws.onopen = function () {
-    // Web Socket is connected, send data using send()
-    //ws.send(JSON.stringify("Message to send"));
-    console.log("Message is sent...");
-};
 
 var tableBody = $("#tableBody");
 
@@ -54,12 +59,6 @@ ws.onmessage = function (evt) {
         case 'STATE.FLOOR_CHANGED': updateConsole(message.data); break;
         case 'INTERACTION.CONSOLE_CHANGE': console.log("Console changed" + JSON.stringify(message.data));
     }
-};
-
-ws.onclose = function (reason) {
-    // websocket is     closed.
-    console.log("Connection is closed...");
-    console.log(reason);
 };
 
 function toggleOutput(type) {

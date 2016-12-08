@@ -86,5 +86,6 @@ UserInteractionObservable.prototype.callElevator = function (data) {
 module.exports = {
     Observable: userInteractionObservable,
     getButtonsState: getButtonsState,
+    emitConsoleChange: emitConsoleChange,
     EVENTS: EVENTS
 }

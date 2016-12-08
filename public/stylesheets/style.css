@@ -1,8 +1,19 @@
-body {
+/*body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}*/
+
+.connectionConnected {
+    color: green;
 }
 
-a {
-  color: #00B7FF;
+.connectionDisconnected {
+    color: red;
+}
+
+.eti-btn-emulator {
+	padding: 20px 35px;
+	font-size: 50px;
+  border-color: black;
+  border-width: 1px;
 }
