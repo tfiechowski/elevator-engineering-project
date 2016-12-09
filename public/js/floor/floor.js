@@ -1,5 +1,7 @@
 var currentFloor = location.pathname.split('/').pop() | 0;
 
+var buttonUp, buttonDown;
+
 var consoleState = {
     floor: currentFloor,
     up: false,
@@ -12,16 +14,23 @@ var updateButton = (buttonType, value) => {
 
     switch (buttonType) {
         case 'down':
+            if (!buttonDown) {
+                break;
+            }
+
             button = buttonDown;
             consoleState.down = value == 1 ? true : false;
             break;
         case 'up':
+            if (!buttonUp) {
+                break;
+            }
+
             button = buttonUp;
             consoleState.up = value == 1 ? true : false;
             break;
     }
 
-    console.log(button);
     if (value == 1) {
         $(button).removeClass("btn-primary");
         $(button).addClass("btn-success");
@@ -32,14 +41,18 @@ var updateButton = (buttonType, value) => {
 }
 
 var updateFloorButtons = (floors) => {
+    consoleState.destinationFloors = [];
+
     for (var i in floors) {
         if (floors[i] == 1) {
             $("#console" + i).removeClass("btn-primary");
             $("#console" + i).addClass("btn-success");
+            consoleState.destinationFloors.push(i);
         } else {
             $("#console" + i).removeClass("btn-success");
             $("#console" + i).addClass("btn-primary");
         }
+
     }
 }
 
@@ -57,8 +70,8 @@ var sendInteractionEvent = () => {
 $(document).ready(function () {
     console.log("ready!");
 
-    var buttonUp = $("#buttonUp");
-    var buttonDown = $("#buttonDown");
+    buttonUp = $("#buttonUp");
+    buttonDown = $("#buttonDown");
 
     if (buttonUp) {
         buttonUp.click(() => {
@@ -77,11 +90,11 @@ $(document).ready(function () {
     for (var i = 0; i < 4; i++) {
         ((floor) => {
             $("#console" + floor).click(() => {
-                if(consoleState.destinationFloors.indexOf(floor) == -1) {
+                if (consoleState.destinationFloors.indexOf(floor) == -1) {
                     consoleState.destinationFloors.push(floor);
+                    sendInteractionEvent();
                 }
             });
-            sendInteractionEvent();
         })(i);
     }
 
@@ -103,5 +116,4 @@ $(document).ready(function () {
                 updateFloorButtons(newConsoleState.console);
         }
     };
-
 });

@@ -31,7 +31,7 @@ function translateStateToFloor(state) {
 
 function getDirectionToFloor(currentState, destinationFloor) {
     var currentFloor = translateStateToFloor(currentState);
-
+    
     if (currentFloor < destinationFloor) {
         debug("Destination floor is above current(" + destinationFloor + " > " + currentFloor + "). Direction : UP)");
         return controlConstants.DIRECTION.UP;

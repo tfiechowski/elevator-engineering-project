@@ -3,6 +3,10 @@ ws = new WebSocket('ws://' + location.host + '/ws/elevator');
 
 ws.onopen = function () {
     console.log("Web Socket is connected");
+
+    ws.send(JSON.stringify({
+        type: "FORCE_CONSOLE_REFRESH"
+    }))
 };
 
 ws.onclose = function (reason) {

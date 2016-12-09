@@ -40,7 +40,7 @@ function createConsoleChangeListener(ws) {
 
         if (isWebsocketConnected(ws)) {
             ws.send(JSON.stringify({
-                type: userInteraction.EVENTS.CONSOLE_CHANGE,
+                type: userInteraction.EVENTS.CHANGED,
                 data: newConsoleState
             }));
         }
@@ -53,15 +53,23 @@ function endpointHandler(ws, req) {
 
     var stateListener = createStateListener(ws);
     var floorChangeListener = (newConsoleState) => {
-        debug("Sending new console state: " + JSON.stringify(newConsoleState));
+        debug("Sending new floor: " + JSON.stringify(newConsoleState));
 
         if (isWebsocketConnected(ws)) {
             ws.send(JSON.stringify({
-                type: userInteraction.EVENTS.CONSOLE_CHANGE,
+                type: userInteraction.EVENTS.FLOOR_CHANGED,
                 data: newConsoleState
             }));
         }
     };
+
+    ws.on('message', (data) => {
+        var message = JSON.parse(data);
+
+        switch (data.type) {
+            case 'FORCE_CONSOLE_REFRESH': userInteraction.emitConsoleChange(); break;
+        }
+    })
 
     var consoleChangeListener = (newConsoleState) => {
         debug("Sending new console state: " + JSON.stringify(newConsoleState));

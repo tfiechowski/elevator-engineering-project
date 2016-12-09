@@ -1,6 +1,8 @@
 var debug = require('debug')('interaction');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
+var stateMonitor = require('../state/monitor');
+
 
 var EVENTS = { 
     CALL: "INTERACTION.CALL",
@@ -41,7 +43,7 @@ function getButtonsState() {
  * CALL request - when console buttons change.
  */
 function emitConsoleChange() {
-    debug("Emitting " + EVENTS.CONSOLE_CHANGE + " event");
+    debug("Emitting " + EVENTS.CONSOLE_CHANGE + " event. Buttons state: " + JSON.stringify(getButtonsState()));
     userInteractionObservable.emit(EVENTS.CONSOLE_CHANGE, getButtonsState());
 }
 
@@ -80,12 +82,30 @@ UserInteractionObservable.prototype.callElevator = function (data) {
     return this.emit(EVENTS.CALL, data);
 }
 
+// stateMonitor.Observable.on(stateMonitor.EVENTS.FLOOR_CHANGED, (newFloor) => {
+//     // After reaching the floor, we reset all console values there
+    
+//     // debug("Resettiing console on floor: " + newFloor);
 
+//     // buttonStates.up[newFloor] = 0;
+//     // buttonStates.down[newFloor] = 0;
+//     // buttonStates.console[newFloor] = 0;
 
+//     // emitConsoleChange();
+// });
+
+function resetButtonStatesForFloor(floor) {
+    buttonStates.up[floor] = 0;
+    buttonStates.down[floor] = 0;
+    buttonStates.console[floor] = 0;
+
+    emitConsoleChange();
+}
 
 module.exports = {
     Observable: userInteractionObservable,
     getButtonsState: getButtonsState,
     emitConsoleChange: emitConsoleChange,
+    resetButtonStatesForFloor: resetButtonStatesForFloor, 
     EVENTS: EVENTS
 }

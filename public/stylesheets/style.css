@@ -17,3 +17,11 @@
   border-color: black;
   border-width: 1px;
 }
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:hover { outline: 0 !important;
+ background: rgba(0,0,0,0);
+}

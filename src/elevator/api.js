@@ -120,10 +120,11 @@ function goToFloor(destinationFloor) {
 
     var destinationDirection = stateUtils.getDirectionToFloor(currentState, destinationFloor);
 
+    debug("Direction:" + destinationDirection);
     setDirection(destinationDirection);
 
     // Timeout is needed for keys inside the elevator to change, and for voltages to stabilise.
-    var timeout = 10;
+    var timeout = 1000;
     setTimeout(() => {
         debug("Starting elevator after " + timeout + " after setting direction pin");
         start();
@@ -172,7 +173,7 @@ function setFastMovement() {
  * This function tells the elevator to move SLOWLY.
  * It's shorthand for setSpeed(SPEED.SLOW);
  */
-function setFastMovement() {
+function setSlowMovement() {
     setSpeed(stateConstants.SPEED.SLOW);
 }
 
@@ -180,5 +181,7 @@ function setFastMovement() {
 
 module.exports = {
     setOutput: setOutput,
-    goToFloor: goToFloor
+    goToFloor: goToFloor,
+    setFastMovement: setFastMovement,
+    setSlowMovement: setSlowMovement
 }

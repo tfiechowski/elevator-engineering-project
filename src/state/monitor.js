@@ -15,7 +15,8 @@ var stateUtils = require('./utils');
 // Variables and Event definitions
 var EVENTS = {
     "CHANGED": "STATE.CHANGED",
-    "FLOOR_CHANGED": "STATE.FLOOR_CHANGED"
+    "FLOOR_CHANGED": "STATE.FLOOR_CHANGED",
+    "NEAR_FLOOR": "STATE.NEAR_FLOOR"
 }
 
 var currentState = {
@@ -27,6 +28,8 @@ var currentState = {
 }
 
 var lastFloor = -1;
+var last3rdpin = -1;
+var last4thpin = -1;
 
 
 // Monitor Observable:
@@ -87,12 +90,12 @@ function initializeMonitoring() {
         })(i);
     }
 
-    // gpio.open(pinout['limit'], gpio.OUTPUT);
-    // gpio.monitor(pinout['limit'], () => {
-    //     debug("Limit pin changed state");
-    //     currentState['limit'] = gpio.read(pinout['limit']);
-    //     stateMonitorObservable.changeState(currentState);
-    // });
+    gpio.open(pinout['limit'], gpio.OUTPUT);
+    gpio.monitor(pinout['limit'], () => {
+        debug("Limit pin changed state");
+        currentState['limit'] = gpio.read(pinout['limit']);
+        stateMonitorObservable.changeState(currentState);
+    });
 
     debugInit("Done!");
 }
@@ -110,26 +113,37 @@ function forceStateRefresh() {
     stateMonitorObservable.changeState(currentState);
 }
 
-function checkFloorChange() {
-    stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
-
-        // We check floors[2] becouse this transoptor is in HIGH state on every floor.
-        if (newState.floors[2] === 1) {
-            var timeout = 15;
-
-            setTimeout(() => {
-                var currentFloor = stateUtils.translateStateToFloor(getCurrentState());
-
-                if(currentFloor != lastFloor) {
-                    lastFloor = currentFloor;
-
-                    stateMonitorObservable.emit(EVENTS.FLOOR_CHANGED, currentFloor);
-                }
-
-            }, timeout);
-        }
-    });
+function getCurrentState() {
+    return Object.deepClone(currentState);
 }
+
+stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
+    // We check floors[2] becouse this transoptor is in HIGH state on every floor.
+    if (newState.floors[2] === 1 && last3rdpin !== 1) {
+        var timeout = 15;
+
+        setTimeout(() => {
+            var currentFloor = stateUtils.translateStateToFloor(getCurrentState());
+
+            if (currentFloor != lastFloor) {
+                lastFloor = currentFloor;
+
+                stateMonitorObservable.emit(EVENTS.FLOOR_CHANGED, currentFloor);
+            }
+
+        }, timeout);
+    }
+
+    last3rdpin = newState.floors[2];
+
+    if (newState.floors[3] !== last4thpin) {
+        debug("Elevator changed proximity");
+        stateMonitorObservable.emit(EVENTS.NEAR_FLOOR, newState.floors[3]);
+    }
+
+    last4thpin = newState.floors[3];
+});
+
 
 initializeMonitoring();
 debug("Start state:");
@@ -138,8 +152,10 @@ debug(JSON.stringify(currentState));
 module.exports = {
     Observable: stateMonitorObservable,
     EVENTS: EVENTS,
-    getCurrentState: () => {
-        return Object.deepClone(currentState);
-    },
-    forceStateRefresh: forceStateRefresh
+    getCurrentState: getCurrentState,
+    forceStateRefresh: forceStateRefresh,
+    getCurrentFloor: () => {
+        debug("RETURNING CURRENT FLOOR: " + lastFloor);
+        return lastFloor;
+    }
 }
