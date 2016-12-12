@@ -29,8 +29,8 @@ function translateStateToFloor(state) {
     return parseInt(state.floors.join("").slice(0, 2), 2);
 }
 
-function getDirectionToFloor(currentState, destinationFloor) {
-    var currentFloor = translateStateToFloor(currentState);
+function getDirectionToFloor(currentFloor, destinationFloor) {
+    // var currentFloor = translateStateToFloor(currentState);
     
     if (currentFloor < destinationFloor) {
         debug("Destination floor is above current(" + destinationFloor + " > " + currentFloor + "). Direction : UP)");

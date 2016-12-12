@@ -16,10 +16,11 @@ var stateUtils = require('./utils');
 var EVENTS = {
     "CHANGED": "STATE.CHANGED",
     "FLOOR_CHANGED": "STATE.FLOOR_CHANGED",
-    "ELEVATOR_STOPPED": "STATE.ELEVATOR_STOPPPED",
+    "ELEVATOR_STOPPED": "STATE.ELEVATOR_STOPPED",
     "NEAR_FLOOR": "STATE.NEAR_FLOOR"
 }
 
+var lastFloor = -1;
 var currentState = {
     floors: [0, 0, 0, 0],
     limit: 0,
@@ -127,7 +128,7 @@ function getCurrentState() {
 
 function checkFloorChange(newState) {
     // We check floors[2] becouse this transoptor is in HIGH state on every floor.
-    if (newState.floors[2] === 1 && last3rdpin !== 1) {
+    if (newState.floors[2] === 1 && previousState.floors[2] !== 1) {
         var timeout = 15;
 
         setTimeout(() => {
@@ -138,18 +139,19 @@ function checkFloorChange(newState) {
 
                 stateMonitorObservable.emit(EVENTS.FLOOR_CHANGED, currentFloor);
             }
-
         }, timeout);
     }
-
-    last3rdpin = newState.floors[2];
 }
 
 function checkElevatorStopped(newState) {
     if (newState.start == 1 && previousState.start == 0) {
+        debug("Elevator stopped at floor");
         var currentFloor = stateUtils.translateStateToFloor(newState);
 
-        stateMonitorObservable.emit(EVENTS.ELEVATOR_STOPPED, currentFloor);
+        setTimeout(() => {
+            debug("Emitting elevator stoped");
+            stateMonitorObservable.emit(EVENTS.ELEVATOR_STOPPED, lastFloor); 
+        }, 20);
     }
 }
 
@@ -177,7 +179,7 @@ module.exports = {
     getCurrentState: getCurrentState,
     forceStateRefresh: forceStateRefresh,
     getCurrentFloor: () => {
-        debug("RETURNING CURRENT FLOOR: " + lastFloor);
+        debug("RETURNING REMEMBERED FLOOR: " + lastFloor);
         return lastFloor;
     }
 }

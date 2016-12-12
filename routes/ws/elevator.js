@@ -56,10 +56,15 @@ function endpointHandler(ws, req) {
         debug("Sending new floor: " + JSON.stringify(newConsoleState));
 
         if (isWebsocketConnected(ws)) {
-            ws.send(JSON.stringify({
-                type: userInteraction.EVENTS.FLOOR_CHANGED,
+            var body = JSON.stringify({
+                type: stateMonitor.EVENTS.FLOOR_CHANGED,
                 data: newConsoleState
-            }));
+            });
+
+            debug("BODY:");
+            debug(body);
+
+            ws.send(body);
         }
     };
 
@@ -82,6 +87,26 @@ function endpointHandler(ws, req) {
         }
     };
 
+    var elevatorStoppedListener = (floor) => {
+        debug("Elevator stopped at floor: " + floor);
+        if (isWebsocketConnected(ws)) {
+            ws.send(JSON.stringify({
+                type: stateMonitor.EVENTS.ELEVATOR_STOPPED,
+                data: floor
+            }));
+        }
+    }
+
+    var requestMoveListener = (data) => {
+        debug("Elevator requested to move to floors: " + data.destinationFloors + " from floor: " + data.floor);
+        if (isWebsocketConnected(ws)) {
+            ws.send(JSON.stringify({
+                type: userInteraction.EVENTS.REQUEST_MOVE,
+                data: data
+            }));
+        }
+    }
+
     ws.on('close', () => {
         debug("Websocket connection closed.");
 
@@ -91,14 +116,22 @@ function endpointHandler(ws, req) {
         stateMonitor.Observable.removeListener(stateMonitor.EVENTS.FLOOR_CHANGED,
             floorChangeListener);
 
+        stateMonitor.Observable.removeListener(stateMonitor.EVENTS.ELEVATOR_STOPPED,
+            elevatorStoppedListener);
+
         userInteraction.Observable.removeListener(userInteraction.EVENTS.CONSOLE_CHANGE,
             consoleChangeListener);
+
+        userInteraction.Observable.removeListener(userInteraction.EVENTS.REQUEST_MOVE,
+            requestMoveListener);
     });
 
     // Setting up listening to events:
     stateMonitor.Observable.on(stateMonitor.EVENTS.CHANGED, stateListener);
     stateMonitor.Observable.on(stateMonitor.EVENTS.FLOOR_CHANGED, floorChangeListener);
+    stateMonitor.Observable.on(stateMonitor.EVENTS.ELEVATOR_STOPPED, elevatorStoppedListener);
     userInteraction.Observable.on(userInteraction.EVENTS.CONSOLE_CHANGE, consoleChangeListener);
+    userInteraction.Observable.on(userInteraction.EVENTS.REQUEST_MOVE, requestMoveListener);
 
     // At connection, we force monitor to refresh state. It will trigger STATE.CHANGED event
     // and will send a message to connected client with current state.

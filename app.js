@@ -23,8 +23,8 @@ debug("Initializing API and WebSocket endpoints");
 
 var counter = 0;
 app.use(function(req, res, next) {
-	console.log("SETTING CORZ: " + counter);
-	console.log(req.headers);
+	// console.log("SETTING CORZ: " + counter);
+	// console.log(req.headers);
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -41,6 +41,8 @@ app.use(function(req, res, next) {
 app.use('/api/interaction', require('./routes/api/interaction'));
 app.use('/api/elevator', require('./routes/api/elevator'));
 app.use('/ws', require('./routes/ws/elevator')(app._router));
+
+require('./src/algorithm/algorithm');
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -59,7 +61,11 @@ app.get('/floor/:floor', (req, res) => {
 
 app.get('/interaction', (req, res) => {
   res.render('interaction/interaction');
-})
+});
+
+app.get('/controlpanel', (req, res) => {
+  res.render('controlpanel/controlpanel');
+});
 
 app.use(express.static(path.join(__dirname, 'public'), {
   dotfiles: 'allow'

@@ -116,15 +116,16 @@ function goToFloor(destinationFloor) {
 
     setStopFloor(destinationFloor);
 
-    var currentState = stateMonitor.getCurrentState();
+    // var currentState = stateMonitor.getCurrentState();
 
-    var destinationDirection = stateUtils.getDirectionToFloor(currentState, destinationFloor);
+    var destinationDirection =
+        stateUtils.getDirectionToFloor(stateMonitor.getCurrentFloor(), destinationFloor);
 
     debug("Direction:" + destinationDirection);
     setDirection(destinationDirection);
 
     // Timeout is needed for keys inside the elevator to change, and for voltages to stabilise.
-    var timeout = 1000;
+    var timeout = 500;
     setTimeout(() => {
         debug("Starting elevator after " + timeout + " after setting direction pin");
         start();

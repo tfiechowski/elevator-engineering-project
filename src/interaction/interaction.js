@@ -4,9 +4,10 @@ var util = require('util');
 var stateMonitor = require('../state/monitor');
 
 
-var EVENTS = { 
+var EVENTS = {
     CALL: "INTERACTION.CALL",
-    CONSOLE_CHANGE: "INTERACTION.CONSOLE_CHANGE"
+    CONSOLE_CHANGE: "INTERACTION.CONSOLE_CHANGE",
+    REQUEST_MOVE: "INTERACTION.REQUEST_MOVE"
 }
 
 // Observable
@@ -24,9 +25,9 @@ var userInteractionObservable = new UserInteractionObservable();
  * floors (up/down) and inside the elevator (console).
 */
 var buttonStates = {
-    up: [0,0,0,0],
-    down: [0,0,0,0],
-    console: [0,0,0,0]
+    up: [0, 0, 0, 0],
+    down: [0, 0, 0, 0],
+    console: [0, 0, 0, 0]
 }
 
 /**
@@ -56,25 +57,30 @@ function emitConsoleChange() {
 function processCallRequest(req) {
     var floor = req.floor;
 
-    if(req.up == true) {
+    if (req.up == true) {
         buttonStates.up[floor] = 1;
     }
 
-    if(req.down == true) {
+    if (req.down == true) {
         buttonStates.down[floor] = 1;
-    }
-
-    if(req.destinationFloors.length > 0) {
-        // For each destination floor, we mark corresponding console value to 1
-        for(var i of req.destinationFloors) {
-            buttonStates.console[i] = 1;
-        }
     }
 
     debug("Processed CALL request. New ButtonsState: " + JSON.stringify(buttonStates));
     emitConsoleChange();
 }
- 
+
+function processRequestMoveRequest(req) {
+    if (req.destinationFloors.length > 0) {
+        // For each destination floor, we mark corresponding console value to 1
+        for (var i of req.destinationFloors) {
+            buttonStates.console[i] = 1;
+        }
+
+        emitConsoleChange();
+    }
+
+}
+
 UserInteractionObservable.prototype.callElevator = function (data) {
     processCallRequest(data);
 
@@ -82,17 +88,24 @@ UserInteractionObservable.prototype.callElevator = function (data) {
     return this.emit(EVENTS.CALL, data);
 }
 
-// stateMonitor.Observable.on(stateMonitor.EVENTS.FLOOR_CHANGED, (newFloor) => {
-//     // After reaching the floor, we reset all console values there
-    
-//     // debug("Resettiing console on floor: " + newFloor);
+UserInteractionObservable.prototype.requestMove = function(data) {
+    processRequestMoveRequest(data);
 
-//     // buttonStates.up[newFloor] = 0;
-//     // buttonStates.down[newFloor] = 0;
-//     // buttonStates.console[newFloor] = 0;
+    debug("Emitting " + EVENTS.REQUEST_MOVE + " event");
+    return this.emit(EVENTS.REQUEST_MOVE, data);
+}
 
-//     // emitConsoleChange();
-// });
+stateMonitor.Observable.on(stateMonitor.EVENTS.ELEVATOR_STOPPED, (floor) => {
+    // After reaching the floor, we reset all console values there
+
+    debug("Resetting console on floor: " + floor);
+
+    // buttonStates.up[newFloor] = 0;
+    // buttonStates.down[newFloor] = 0;
+    buttonStates.console[floor] = 0;
+
+    // emitConsoleChange();
+});
 
 function resetButtonStatesForFloor(floor) {
     buttonStates.up[floor] = 0;
@@ -106,6 +119,6 @@ module.exports = {
     Observable: userInteractionObservable,
     getButtonsState: getButtonsState,
     emitConsoleChange: emitConsoleChange,
-    resetButtonStatesForFloor: resetButtonStatesForFloor, 
+    resetButtonStatesForFloor: resetButtonStatesForFloor,
     EVENTS: EVENTS
 }

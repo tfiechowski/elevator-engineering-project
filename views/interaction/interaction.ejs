@@ -3,7 +3,7 @@
 
 <head>
     <% include ../partials/head %>
-        <script src="/js/floor/floor.js"></script>
+        <script src="/js/interaction/interaction.js"></script>
 </head>
 <style>
     button {
@@ -19,7 +19,7 @@ textarea.requestList {
         <div class="col-md-6">
             <!-- Place for request list -->
             <h3>Lista rozkazów</h3>
-            <textarea class="form-control requestList" rows="18" readonly="true">
+            <textarea class="form-control requestList" id="requestList" rows="18" readonly="true">
 Piętro: 0, Góra: 1, Dół: 0, Docelowe piętra : [1,2]
 Opóźnienie: 1500ms
 Piętro: 2, Góra: 0, Dół: 1, Docelowe piętra : [0]
@@ -28,7 +28,7 @@ Piętro: 3, Góra: 0, Dół: 1, Docelowe piętra : [1]
             </textarea>
             <br>
             <div class="col-sm-4 text-center">
-                <button class="btn btn-default" id="interactionCallButton">Start</button>
+                <button class="btn btn-default" id="buttonStart">Start</button>
             </div>
             <div class="col-sm-4 text-center">
                 <button class="btn btn-default" id="interactionCallButton">Pauza</button>
@@ -41,61 +41,46 @@ Piętro: 3, Góra: 0, Dół: 1, Docelowe piętra : [1]
         <div class="col-md-6">
             <!-- Place for creating user requests -->
             <div class="row">
+                <h1>Rozkaz przywołania</h1>
                 <div class="col-sm-6">
-                    <h3>Rozkaz przywołania</h3>
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label for="interactionCallFloor" class="col-sm-4 control-label">Piętro</label>
-                            <div class="col-sm-8">
+                            <label for="interactionCallFloor" class="col-sm-2 control-label">Piętro</label>
+                            <div class="col-sm-10">
                                 <input type="number" class="form-control" id="interactionCallFloor" value="1" min="0" max="3">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="interactionCallUp" class="col-sm-4 control-label">Góra</label>
-                            <div class="col-sm-8 checkbox">
+                            <label for="interactionCallUp" class="col-sm-2 control-label">Góra</label>
+                            <div class="col-sm-10 checkbox">
                                 <label><input type="checkbox" value="3" id="interactionCallUp"></label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="interactionCallDown" class="col-sm-4 control-label">Dół</label>
-                            <div class="col-sm-8 checkbox">
-                                <label><input type="checkbox" value="3" id="dsdsad"></label>
+                            <label for="interactionCallDown" class="col-sm-2 control-label">Dół</label>
+                            <div class="col-sm-10 checkbox">
+                                <label><input type="checkbox" value="3" id="interactionCallDown"></label>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="col-sm-6">
-                    <h3>&nbsp;</h3>
-                    <div class="form-group">
-                        <label class="col-sm-12">Docelowe piętra</label>
+                    <h4>Piętra docelowe</h4>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="3" id="interactionCallFloor3">Piętro 3</label>
                     </div>
-                    <div class="form-group">
-                        <label for="destFloor3" class="col-sm-4 control-label">Piętro 3</label>
-                        <div class="col-sm-8 checkbox">
-                            <label><input type="checkbox" value="3" id="destFloor3"></label>
-                        </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="2" id="interactionCallFloor2">Piętro 2</label>
                     </div>
-                    <div class="form-group">
-                        <label for="destFloor2" class="col-sm-4 control-label">Piętro 2</label>
-                        <div class="col-sm-8 checkbox">
-                            <label><input type="checkbox" value="2" id="destFloor2"></label>
-                        </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="1" id="interactionCallFloor1">Piętro 1</label>
                     </div>
-                    <div class="form-group">
-                        <label for="destFloor1" class="col-sm-4 control-label">Piętro 1</label>
-                        <div class="col-sm-8 checkbox">
-                            <label><input type="checkbox" value="1" id="destFloor1"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="destFloor0" class="col-sm-4 control-label">Piętro 0</label>
-                        <div class="col-sm-8 checkbox">
-                            <label><input type="checkbox" value="0" id="destFloor0"></label>
-                        </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="0" id="interactionCallFloor0">Piętro 0</label>
                     </div>
                 </div>
-                <div class="col-md-3 col-md-offset-9">
-                    <button class="btn btn-default" id="as">Dodaj</button>
+                <div class="col-md-3 text-right col-md-offset-9">
+                    <button class="btn btn-default" id="buttonAddCall">Dodaj</button>
                 </div>
             </div>
             <div class="row">
@@ -105,7 +90,7 @@ Piętro: 3, Góra: 0, Dół: 1, Docelowe piętra : [1]
                         <div class="form-group">
                             <label for="interactionCallFloor" class="col-sm-6 control-label">Opóźnienie [ms]</label>
                             <div class="col-sm-6">
-                                <input type="number" class="form-control" id="interactionCallFloor" value="1000" min="0" placeholder="ms">
+                                <input type="number" class="form-control" id="delayValue" value="1000" min="0" placeholder="ms">
                             </div>
                         </div>
                         
@@ -113,7 +98,7 @@ Piętro: 3, Góra: 0, Dół: 1, Docelowe piętra : [1]
                 </div>
                 <div class="col-sm-6"></div>
                 <div class="col-sm-3 col-sm-offset-9">
-                    <button class="btn btn-default" id="interactionCallButton">Dodaj</button>
+                    <button class="btn btn-default" id="buttonAddDelay">Dodaj</button>
                 </div>
             </div>
         </div>
