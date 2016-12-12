@@ -16,6 +16,7 @@ var stateUtils = require('./utils');
 var EVENTS = {
     "CHANGED": "STATE.CHANGED",
     "FLOOR_CHANGED": "STATE.FLOOR_CHANGED",
+    "ELEVATOR_STOPPED": "STATE.ELEVATOR_STOPPPED",
     "NEAR_FLOOR": "STATE.NEAR_FLOOR"
 }
 
@@ -27,10 +28,7 @@ var currentState = {
     speed: 0
 }
 
-var lastFloor = -1;
-var last3rdpin = -1;
-var last4thpin = -1;
-
+var previousState = JSON.parse(JSON.stringify(currentState));
 
 // Monitor Observable:
 
@@ -44,9 +42,11 @@ util.inherits(StateMonitorObservable, EventEmitter);
 StateMonitorObservable.prototype.changeState = function (newState) {
     debug("State changed, emitting Event! New state:");
     debug(JSON.stringify(newState));
-    this.emit(EVENTS.CHANGED, newState);
 
+    previousState = Object.deepClone(currentState);
     currentState = newState;
+
+    this.emit(EVENTS.CHANGED, newState);
 }
 
 var stateMonitorObservable = new StateMonitorObservable();
@@ -64,8 +64,11 @@ function initializeMonitoring() {
         gpio.open(pin, gpio.OUTPUT, gpio.HIGH);
         gpio.monitor(pin, () => {
             debug("New state on pin " + pin);
-            currentState[key] = gpio.read(pin);
-            stateMonitorObservable.changeState(currentState);
+
+            var newState = Object.deepClone(currentState);
+            newState[key] = gpio.read(pin);
+
+            stateMonitorObservable.changeState(newState);
         });
         gpio.write(pin, gpio.HIGH);
     }
@@ -75,17 +78,19 @@ function initializeMonitoring() {
     initOutputPinMonitoring('direction');
     initOutputPinMonitoring('speed');
 
-
     debugInit("Input pins...");
     for (var i of pinout.floors) {
         ((pin) => {
             gpio.open(pin, gpio.INPUT);
             gpio.monitor(pin, () => {
                 pinIndex = pinout.floors.indexOf(pin);
-                currentState.floors[pinIndex] = gpio.read(pin);
+
+                var newState = Object.deepClone(currentState);
+                newState.floors[pinIndex] = gpio.read(pin);
+
                 debug("Pin " + pinIndex + " changed state");
-                debug(JSON.stringify(currentState));
-                stateMonitorObservable.changeState(currentState);
+                debug(JSON.stringify(newState));
+                stateMonitorObservable.changeState(newState);
             });
         })(i);
     }
@@ -93,8 +98,11 @@ function initializeMonitoring() {
     gpio.open(pinout['limit'], gpio.OUTPUT);
     gpio.monitor(pinout['limit'], () => {
         debug("Limit pin changed state");
-        currentState['limit'] = gpio.read(pinout['limit']);
-        stateMonitorObservable.changeState(currentState);
+
+        var newState = Object.deepClone(currentState);
+        newState[key] = gpio.read(pinout['limit']);
+
+        stateMonitorObservable.changeState(newState);
     });
 
     debugInit("Done!");
@@ -117,7 +125,7 @@ function getCurrentState() {
     return Object.deepClone(currentState);
 }
 
-stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
+function checkFloorChange(newState) {
     // We check floors[2] becouse this transoptor is in HIGH state on every floor.
     if (newState.floors[2] === 1 && last3rdpin !== 1) {
         var timeout = 15;
@@ -135,13 +143,27 @@ stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
     }
 
     last3rdpin = newState.floors[2];
+}
 
-    if (newState.floors[3] !== last4thpin) {
+function checkElevatorStopped(newState) {
+    if (newState.start == 1 && previousState.start == 0) {
+        var currentFloor = stateUtils.translateStateToFloor(newState);
+
+        stateMonitorObservable.emit(EVENTS.ELEVATOR_STOPPED, currentFloor);
+    }
+}
+
+function checkProximity(newState) {
+    if (newState.floors[3] !== previousState.floors[3]) {
         debug("Elevator changed proximity");
         stateMonitorObservable.emit(EVENTS.NEAR_FLOOR, newState.floors[3]);
     }
+}
 
-    last4thpin = newState.floors[3];
+stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
+    checkFloorChange(newState);
+    checkElevatorStopped(newState);
+    checkProximity(newState);
 });
 
 
