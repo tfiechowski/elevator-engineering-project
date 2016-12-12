@@ -22,9 +22,9 @@ function translatePinValue(type, value) {
         case 'start':
             return value == 0 ? "START" : "STOP"
         case 'direction':
-            return value == 0 ? "UP" : "DOWN";
+            return value == 0 ? "GÓRA" : "DÓŁ";
         case 'speed':
-            return value == 0 ? "FAST" : "SLOW";
+            return value == 0 ? "SZYBKO" : "WOLNO";
     }
 }
 
@@ -46,6 +46,9 @@ function updateLastFloor(lastFloor) {
     $("#lastFloor").html(lastFloor);
 }
 
+function updateConsole(consoleState) {
+
+}
 
 var tableBody = $("#tableBody");
 

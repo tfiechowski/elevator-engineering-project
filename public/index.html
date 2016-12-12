@@ -10,7 +10,8 @@
     <meta name="author" content="Tomasz Fiechowski">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <!--<link rel="stylesheet" href="stylesheets/bootstrap.css">-->
 
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.6.0/redux.js"></script>
@@ -26,61 +27,47 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <h1>Elevator state overview</h1>
+            <div class="col-md-6">
+                <h1>Podgląd stanu windy</h1>
                 <table class="table table-responsive">
                     <thead>
                         <th>Pin - nazwa</th>
-                        <th>Pin - numer</th>
-                        <th>Wartosc</th>
-                        <th>Toggle</th>
+                        <th>Wartość</th>
+                        <th>Przełącz</th>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Start</td>
-                            <td>#</td>
                             <td id="startValue"></td>
-                            <td><button class="btn btn-default" id="startToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="startToggle">Przełącz</button></td>
                         </tr>
                         <tr>
-                            <td>Direction</td>
-                            <td>#</td>
+                            <td>Kierunek</td>
                             <td id="directionValue"></td>
-                            <td><button class="btn btn-default" id="directionToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="directionToggle">Przełącz</button></td>
                         </tr>
                         <tr>
-                            <td>Speed</td>
-                            <td>#</td>
+                            <td>Prędkość</td>
                             <td id="speedValue"></td>
-                            <td><button class="btn btn-default" id="speedToggle">Toggle</button></td>
+                            <td><button class="btn btn-default" id="speedToggle">Przełącz</button></td>
                         </tr>
                         <tr>
-                            <td>Limit</td>
-                            <td>#</td>
-                            <td id="limitValue"></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>Floor #0</td>
-                            <td>#</td>
+                            <td>Czujnik odbiciowy 0</td>
                             <td id="floor0Value"></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Floor #1</td>
-                            <td>#</td>
+                            <td>Czujnik odbiciowy 1</td>
                             <td id="floor1Value"></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Floor #2</td>
-                            <td>#</td>
+                            <td>Czujnik odbiciowy 2</td>
                             <td id="floor2Value"></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Floor #3</td>
-                            <td>#</td>
+                            <td>Czujnik odbiciowy 3</td>
                             <td id="floor3Value"></td>
                             <td></td>
                         </tr>
@@ -88,67 +75,99 @@
                 </table>
             </div>
             <div class="col-md-6">
-                <h1>GoToFloor</h1>
+                <h1>Jedź na piętro</h1>
                 <form>
                     <div class="input-group">
                         <input type="number" class="form-control" placeholder="Destination floor" value="1" id="goToFloorInput" min="0" max="3">
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="button" id="goToFloorButton">
-                                Go!
+                                Jedź!
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="col-md-6">
-                <h1>Console and Last Floor</h1>
+                <h1>Konsola</h1>
                 <div>
-                    Last Floor: <span id="lastFloor">-1</span>
+                    Ostatnio odwiedzone piętro: <span id="lastFloor">0</span>
+                    <table class="table table-responsive">
+                        <thead>
+                            <th>Piętro</th>
+                            <th>Przycisk Góra</th>
+                            <th>Przycisk Dół</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    Docelowe piętra: <span id="consoleDestinationFloors"></span>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="row">
-                    <h1>Interaction.Call</h1>
-                    <div class="col-sm-6">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label for="interactionCallFloor" class="col-sm-2 control-label">Floor</label>
-                                <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="interactionCallFloor" value="1" min="0" max="3">
-                                </div>
+                <h1>Rozkaz przywołania</h1>
+                <div class="col-sm-6">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="interactionCallFloor" class="col-sm-2 control-label">Piętro</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="interactionCallFloor" value="1" min="0" max="3">
                             </div>
-                            <div class="form-group">
-                                <label for="interactionCallUp" class="col-sm-2 control-label">Up</label>
-                                <div class="col-sm-10 checkbox">
-                                    <label><input type="checkbox" value="3" id="interactionCallUp"></label>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interactionCallUp" class="col-sm-2 control-label">Góra</label>
+                            <div class="col-sm-10 checkbox">
+                                <label><input type="checkbox" value="3" id="interactionCallUp"></label>
                             </div>
-                            <div class="form-group">
-                                <label for="interactionCallDown" class="col-sm-2 control-label">Down</label>
-                                <div class="col-sm-10 checkbox">
-                                    <label><input type="checkbox" value="3" id="interactionCallDown"></label>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interactionCallDown" class="col-sm-2 control-label">Dół</label>
+                            <div class="col-sm-10 checkbox">
+                                <label><input type="checkbox" value="3" id="interactionCallDown"></label>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-6">
+                    <h4>Piętra docelowe</h4>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="3" id="interactionCallFloor3">Piętro 3</label>
                     </div>
-                    <div class="col-sm-6">
-                        <h4>Destination floors</h4>
-                        <div class="checkbox">
-                            <label><input type="checkbox" value="3" id="interactionCallFloor3">Floor 3</label>
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" value="2" id="interactionCallFloor2">Floor 2</label>
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" value="1" id="interactionCallFloor1">Floor 1</label>
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" value="0" id="interactionCallFloor0">Floor 0</label>
-                        </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="2" id="interactionCallFloor2">Piętro 2</label>
                     </div>
-                    <div class="col-md-3 col-md-offset-9">
-                        <button class="btn btn-default" id="interactionCallButton">Go!</button>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="1" id="interactionCallFloor1">Piętro 1</label>
                     </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="0" id="interactionCallFloor0">Piętro 0</label>
+                    </div>
+                </div>
+                <div class="col-md-3 text-right col-md-offset-9">
+                    <button class="btn btn-default" id="interactionCallButton">Przywołaj</button>
                 </div>
             </div>
         </div>
