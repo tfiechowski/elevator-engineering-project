@@ -1,5 +1,6 @@
 var controlConstants = require('./constants');
 var debug = require('debug')('state:utils');
+
 /**
  * Transoptor sensor readings for floors:
  * 
@@ -29,14 +30,22 @@ function translateStateToFloor(state) {
     return parseInt(state.floors.join("").slice(0, 2), 2);
 }
 
-function getDirectionToFloor(currentFloor, destinationFloor) {
-    // var currentFloor = translateStateToFloor(currentState);
-    
-    if (currentFloor < destinationFloor) {
-        debug("Destination floor is above current(" + destinationFloor + " > " + currentFloor + "). Direction : UP)");
+function translateStateToPosition(state) {
+    return parseInt(state.floors.join(""), 2);
+}
+
+function translateFloorToPosition(floor) {
+    return 3 + 4 * floor;
+}
+
+function getDirectionToFloor(currentPosition, destinationFloor) {
+    var destinationPosition = translateFloorToPosition(destinationFloor);
+
+    if (currentPosition < destinationPosition) {
+        debug("Destination floor is above current(pos: " + destinationPosition + " > " + currentPosition + "). Direction : UP)");
         return controlConstants.DIRECTION.UP;
     } else {
-        debug("Destination floor is below current(" + destinationFloor + " < " + currentFloor + "). Direction : DOWN)");
+        debug("Destination floor is below current(pos: " + destinationPosition + " < " + currentPosition + "). Direction : DOWN)");
         return controlConstants.DIRECTION.DOWN;
     }
 }
@@ -56,7 +65,7 @@ function getDirectionToFloor(currentFloor, destinationFloor) {
  * @returns {Boolean} true if object has state schema, false otherwise
  */
 function validateStateObject(state) {
-    if(state === null || state === undefined) {
+    if (state === null || state === undefined) {
         return false;
     }
 
@@ -119,5 +128,7 @@ module.exports = {
     compareStatesFloors: compareStatesFloors,
     translateFloorToState: translateFloorToState,
     translateStateToFloor: translateStateToFloor,
+    translateStateToPosition: translateStateToPosition,
+    translateFloorToPosition: translateFloorToPosition,
     getDirectionToFloor: getDirectionToFloor
 }

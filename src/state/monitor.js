@@ -10,6 +10,7 @@ var pinout = require('../../config/config.json').pinout;
 var debug = require('debug')('state:monitor');
 var debugInit = require('debug')('state:monitor:init');
 var stateUtils = require('./utils');
+var constants = require('./constants');
 
 
 // Variables and Event definitions
@@ -20,6 +21,8 @@ var EVENTS = {
     "NEAR_FLOOR": "STATE.NEAR_FLOOR"
 }
 
+
+var position = 0;
 var lastFloor = -1;
 var currentState = {
     floors: [0, 0, 0, 0],
@@ -80,7 +83,8 @@ function initializeMonitoring() {
     initOutputPinMonitoring('speed');
 
     debugInit("Input pins...");
-    for (var i of pinout.floors) {
+    // Floor 0 & 1 - just floor identifiers
+    for (var i = 0; i < 2; i++) {
         ((pin) => {
             gpio.open(pin, gpio.INPUT);
             gpio.monitor(pin, () => {
@@ -93,7 +97,32 @@ function initializeMonitoring() {
                 debug(JSON.stringify(newState));
                 stateMonitorObservable.changeState(newState);
             });
-        })(i);
+        })(pinout.floors[i]);
+    }
+
+    // Floor & proximity sensor
+    for (var i = 2; i < 4; i++) {
+        ((pin) => {
+            gpio.open(pin, gpio.INPUT);
+            gpio.monitor(pin, () => {
+                pinIndex = pinout.floors.indexOf(pin);
+
+                var newState = Object.deepClone(currentState);
+
+                var newValue = gpio.read(pin);
+                newState.floors[pinIndex] = newValue;
+
+                if (currentState.direction === constants.DIRECTION.UP) {
+                    position++;
+                } else {
+                    position--;
+                }
+
+                debug("Pin " + pinIndex + " changed state");
+                debug(JSON.stringify(newState));
+                stateMonitorObservable.changeState(newState);
+            });
+        })(pinout.floors[i]);
     }
 
     gpio.open(pinout['limit'], gpio.OUTPUT);
@@ -150,7 +179,7 @@ function checkElevatorStopped(newState) {
 
         setTimeout(() => {
             debug("Emitting elevator stoped");
-            stateMonitorObservable.emit(EVENTS.ELEVATOR_STOPPED, lastFloor); 
+            stateMonitorObservable.emit(EVENTS.ELEVATOR_STOPPED, lastFloor);
         }, 20);
     }
 }
@@ -162,7 +191,27 @@ function checkProximity(newState) {
     }
 }
 
+function isFloorPosition(state) {
+    return [3, 7, 11, 15].indexOf(positionValue) !== -1;
+}
+
+
+function checkPosition(newState) {
+    var positionValue = stateUtils.translateStateToPosition(newState);
+
+    // var isFloor = ;
+
+    if (isFloorPosition(newState)) {
+        position = positionValue;
+    } else {
+
+        // checking going up
+
+    }
+}
+
 stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
+    checkPosition(newState);
     checkFloorChange(newState);
     checkElevatorStopped(newState);
     checkProximity(newState);
@@ -178,8 +227,14 @@ module.exports = {
     EVENTS: EVENTS,
     getCurrentState: getCurrentState,
     forceStateRefresh: forceStateRefresh,
+    getCurrentPosition: () => {
+        return position;
+    },
     getCurrentFloor: () => {
         debug("RETURNING REMEMBERED FLOOR: " + lastFloor);
         return lastFloor;
+    },
+    getCurrentDirection: () => {
+        return currentState.direction;
     }
 }

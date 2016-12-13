@@ -38,10 +38,21 @@ router.post('/call', function (req, res, next) {
         debug('Body is invalid!');
         res.sendStatus(400);
     }
-    
+
     debug("Calling the elevator from floor " + req.body['floor'] +
         ". Up: " + req.body['up'] +
         ". Down: " + req.body['down']);
+
+
+    var stringToBoolean = function(string) {
+        switch (string.toLowerCase().trim()) {
+            case "true": case "yes": case "1": return true;
+            case "false": case "no": case "0": case null: return false;
+            default: return Boolean(string);
+        }
+    }
+    req.body.up = stringToBoolean(req.body.up);
+    req.body.down = stringToBoolean(req.body.down);
 
     if (interaction.Observable.callElevator(req.body)) {
         res.sendStatus(200);

@@ -23,7 +23,12 @@ var currentCommand = 0;
 
 function sendCallRequest(request) {
     console.log("Sending call request:" + JSON.stringify(request));
-    $.post('/api/interaction/call', request);
+    $.post('/api/interaction/call', request).then(() => {
+        console.log("call request success");
+    }).catch((error) => {
+        console.log("call request failed");
+        console.log(error);
+    })
 }
 
 function sendMoveRequest(floor) {
@@ -57,7 +62,11 @@ ws.onmessage = function (evt) {
 function updateRequestList() {
     $("#requestList").html(
         commands.map((el) => {
-            return JSON.stringify(el);
+            if(el.type == 'call') {
+                return '<li>Floor: ' + el.data.floor + '<br>Up: ' + el.data.up + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Down: ' + el.data.down + '<br>Destination floors: ' + el.data.destinationFloors + '</li>';
+            } else {
+                return '<li>Delay: ' + el.data + '</li>'
+            }
         }).join("\n")
     );
 }
@@ -79,8 +88,8 @@ $(document).ready(function () {
         var callRequest = {
             type: "CALL",
             floor: floor,
-            up: $("#interactionCallUp").is(":checked") == true ? 1 : 0,
-            down: $("#interactionCallDown").is(":checked") == true ? 1 : 0,
+            up: $("#interactionCallUp").is(":checked"),
+            down: $("#interactionCallDown").is(":checked"),
             destinationFloors: destinationFloors
         }
 
@@ -108,6 +117,11 @@ $(document).ready(function () {
                     break;
             }
         }
+    });
+
+    $("#buttonReset").click(() => {
+        commands = [];
+        updateRequestList();
     });
 
     $("#buttonAddDelay").click(() => {

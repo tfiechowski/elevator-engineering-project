@@ -21,104 +21,114 @@ util.inherits(UserInteractionObservable, EventEmitter);
 var userInteractionObservable = new UserInteractionObservable();
 
 /**
- * This object represents user interaction buttons state at the different 
- * floors (up/down) and inside the elevator (console).
-*/
-var buttonStates = {
-    up: [0, 0, 0, 0],
-    down: [0, 0, 0, 0],
-    console: [0, 0, 0, 0]
-}
-
-/**
- * This function returns current user interaction buttons state.
- * 
- * @return {Object} object that contains arrays for up, down, and console buttons states
- */
-function getButtonsState() {
-    return Object.deepClone(buttonStates);
-}
-
-/**
  * This function emits the CONSOLE_CHANGE event. It should be triggered after processing
  * CALL request - when console buttons change.
  */
-function emitConsoleChange() {
-    debug("Emitting " + EVENTS.CONSOLE_CHANGE + " event. Buttons state: " + JSON.stringify(getButtonsState()));
-    userInteractionObservable.emit(EVENTS.CONSOLE_CHANGE, getButtonsState());
-}
+function emitConsoleChange(elevatorConsole) {
+    var consoleState = buildFullConsole(elevatorConsole);
 
-/**
- * This function processes the CALL request and updates corresponding 
- * values in the 'buttonStates' object.
- * 
- * @param {Object} req call request object
- */
-function processCallRequest(req) {
-    var floor = req.floor;
-
-    if (req.up == true) {
-        buttonStates.up[floor] = 1;
-    }
-
-    if (req.down == true) {
-        buttonStates.down[floor] = 1;
-    }
-
-    debug("Processed CALL request. New ButtonsState: " + JSON.stringify(buttonStates));
-    emitConsoleChange();
+    debug("Emitting " + EVENTS.CONSOLE_CHANGE + " event. Buttons state: " + JSON.stringify(consoleState));
+    userInteractionObservable.emit(EVENTS.CONSOLE_CHANGE, consoleState);
 }
 
 function processRequestMoveRequest(req) {
-    if (req.destinationFloors.length > 0) {
-        // For each destination floor, we mark corresponding console value to 1
-        for (var i of req.destinationFloors) {
-            buttonStates.console[i] = 1;
-        }
-
-        emitConsoleChange();
-    }
 
 }
 
 UserInteractionObservable.prototype.callElevator = function (data) {
-    processCallRequest(data);
-
     debug("Emitting " + EVENTS.CALL + " event");
     return this.emit(EVENTS.CALL, data);
 }
 
-UserInteractionObservable.prototype.requestMove = function(data) {
-    processRequestMoveRequest(data);
-
+UserInteractionObservable.prototype.requestMove = function (data) {
     debug("Emitting " + EVENTS.REQUEST_MOVE + " event");
     return this.emit(EVENTS.REQUEST_MOVE, data);
 }
 
-stateMonitor.Observable.on(stateMonitor.EVENTS.ELEVATOR_STOPPED, (floor) => {
-    // After reaching the floor, we reset all console values there
+function buildFullConsole(ec) {
+    var up = [0, 0, 0, 0];
+    for (var i of ec.up) {
+        up[i] = 1;
+    }
 
-    debug("Resetting console on floor: " + floor);
+    var down = [0, 0, 0, 0];
+    for (var i of ec.down) {
+        down[i] = 1;
+    }
 
-    // buttonStates.up[newFloor] = 0;
-    // buttonStates.down[newFloor] = 0;
-    buttonStates.console[floor] = 0;
+    var _console = [0, 0, 0, 0];
+    for (var i of ec.destinationFloors) {
+        _console[i] = 1;
+    }
 
-    // emitConsoleChange();
-});
-
-function resetButtonStatesForFloor(floor) {
-    buttonStates.up[floor] = 0;
-    buttonStates.down[floor] = 0;
-    buttonStates.console[floor] = 0;
-
-    emitConsoleChange();
+    return {
+        up: up,
+        down: down,
+        console: _console
+    }
 }
+
+class ElevatorConsole {
+    constructor() {
+        this.up = [];
+        this.down = [];
+        this.destinationFloors = [];
+
+        var self = this;
+
+        this.up.push = function (data) {
+            var ret = Array.prototype.push.call(this, data);
+            emitConsoleChange(self);
+            return ret;
+        }
+
+        this.up.remove = function (element) {
+            var index = self.up.indexOf(element);
+
+            if (index >= 0) {
+                self.up.splice(index, -1);
+                emitConsoleChange(self);
+            }
+        }
+
+        this.down.push = function (data) {
+            var ret = Array.prototype.push.call(this, data);
+            emitConsoleChange(self);
+            return ret;
+        }
+
+        this.down.remove = function (element) {
+            var index = self.down.indexOf(element);
+
+            if (index >= 0) {
+                self.down.splice(index, -1);
+                emitConsoleChange(self);
+            }
+        }
+
+        this.destinationFloors.push = function (data) {
+            var ret = Array.prototype.push.call(this, data);
+            emitConsoleChange(self);
+            return ret;
+        }
+
+        this.destinationFloors.remove = function (element) {
+            var index = self.destinationFloors.indexOf(element);
+
+            if (index >= 0) {
+                self.destinationFloors.splice(index, -1);
+                emitConsoleChange(self);
+            }
+        }
+    }
+}
+
+var elevatorConsole = new ElevatorConsole();
+Object.seal(elevatorConsole);
 
 module.exports = {
     Observable: userInteractionObservable,
-    getButtonsState: getButtonsState,
     emitConsoleChange: emitConsoleChange,
-    resetButtonStatesForFloor: resetButtonStatesForFloor,
+    elevatorConsole: elevatorConsole,
     EVENTS: EVENTS
 }

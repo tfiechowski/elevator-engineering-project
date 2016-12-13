@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.set('view engine', 'ejs');
 
 // Initialize event proxy
-require('./src/events/proxy');
+// require('./src/events/proxy');
 
 // API & WS setup
 debug("Initializing API and WebSocket endpoints");
@@ -42,7 +42,7 @@ app.use('/api/interaction', require('./routes/api/interaction'));
 app.use('/api/elevator', require('./routes/api/elevator'));
 app.use('/ws', require('./routes/ws/elevator')(app._router));
 
-require('./src/algorithm/algorithm');
+require('./src/algorithm/algorithm2');
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

@@ -116,10 +116,8 @@ function goToFloor(destinationFloor) {
 
     setStopFloor(destinationFloor);
 
-    // var currentState = stateMonitor.getCurrentState();
-
     var destinationDirection =
-        stateUtils.getDirectionToFloor(stateMonitor.getCurrentFloor(), destinationFloor);
+        stateUtils.getDirectionToFloor(stateMonitor.getCurrentPosition(), destinationFloor);
 
     debug("Direction:" + destinationDirection);
     setDirection(destinationDirection);
@@ -178,6 +176,13 @@ function setSlowMovement() {
     setSpeed(stateConstants.SPEED.SLOW);
 }
 
+function getCurrentDirection() {
+
+}
+
+function isMoving() {
+    return stateMonitor.getCurrentState().start == stateConstants.START.START;
+}
 
 
 module.exports = {
