@@ -191,7 +191,7 @@ function checkProximity(newState) {
     }
 }
 
-function isFloorPosition(state) {
+function isFloorPosition(positionValue) {
     return [3, 7, 11, 15].indexOf(positionValue) !== -1;
 }
 
@@ -201,7 +201,7 @@ function checkPosition(newState) {
 
     // var isFloor = ;
 
-    if (isFloorPosition(newState)) {
+    if (isFloorPosition(positionValue)) {
         position = positionValue;
     } else {
 

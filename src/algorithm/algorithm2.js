@@ -1,3 +1,4 @@
+"use strict";
 var debug = require('debug')('algorithm2');
 var state = require('../state/monitor');
 var stateConstants = require('../state/constants');
@@ -8,24 +9,22 @@ debug("Initializing algorithm2");
 
 var elevatorConsole = interaction.elevatorConsole;
 
-function resetFloor(floor) {
-
-}
-
 var floorQueue = [];
+var isMoving = false;
 
 interaction.Observable.on(interaction.EVENTS.CALL, (callRequest) => {
     debug("Recieved CALL event");
     var floor = callRequest.floor;
 
+    // If no up or down is specified, the elevator will not move!
     if (callRequest.up == true) {
         elevatorConsole.up.push(floor);
-        floorQueue.push(floor);
+        Array.merge(floorQueue, [floor]);
     }
 
     if (callRequest.down == true) {
         elevatorConsole.down.push(floor);
-        floorQueue.push(floor);
+        Array.merge(floorQueue, [floor]);
     }
 });
 
@@ -38,6 +37,7 @@ interaction.Observable.on(interaction.EVENTS.REQUEST_MOVE, (moveRequest) => {
 
 state.Observable.on(state.EVENTS.ELEVATOR_STOPPED, (floor) => {
     debug("Elevator stopped at floor " + floor + ". Choosing next floor to go to.");
+    isMoving = false;
 
     // Those ifs are commented out for purpose of ELEVATOR_STOPPED emulation
 
@@ -51,13 +51,26 @@ state.Observable.on(state.EVENTS.ELEVATOR_STOPPED, (floor) => {
     elevatorConsole.destinationFloors.remove(floor);
 });
 
+// We check if there are any new destinationFloors periodically.
 var intervalCounter = 0;
 setInterval(() => {
-    if (floorQueue.length > 0) {
+    if (floorQueue.length > 0 && isMoving === false) {
         debug("Interval #" + intervalCounter + "\tQueue: " + floorQueue);
-        var nextFloor = floorQueue.shift();
+        var nextFloor = floorQueue[0];
+        
+        if(elevator.goToFloor !== undefined) {
+            elevator.goToFloor(nextFloor);
 
-        state.Observable.emit(state.EVENTS.ELEVATOR_STOPPED, nextFloor);
-        intervalCounter++;
+            floorQueue.shift();
+
+            intervalCounter++;
+            isMoving = true;
+        }
+
     }
-}, 2000);
+}, 1000);
+
+function reset() {
+    floorQueue = [];
+    // elevator.stop()
+}

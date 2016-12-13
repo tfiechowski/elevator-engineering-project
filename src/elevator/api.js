@@ -65,6 +65,9 @@ function resetStopState() {
 function setOutput(output, value) {
     debug("SetOutput: " + output + " (pin: " + pinout[output] + ") with value: " + value);
 
+    // TODO: reverse dependency
+    // algorithm.reset();
+
     var _val = gpio.convertToPinValue(value);
     switch (output) {
         case 'start':
@@ -111,6 +114,9 @@ function setSpeed(value) {
  */
 function goToFloor(destinationFloor) {
     debug("Going to floor: " + destinationFloor);
+
+    // TODO: reverse dependency
+    // algorithm.reset();
 
     stop();
 
@@ -188,6 +194,7 @@ function isMoving() {
 module.exports = {
     setOutput: setOutput,
     goToFloor: goToFloor,
+    stop: stop,
     setFastMovement: setFastMovement,
     setSlowMovement: setSlowMovement
 }
