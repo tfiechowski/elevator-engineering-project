@@ -5,7 +5,7 @@ var pinValues = {
 };
 
 var moveRequest = {
-    type:'INTERACTION.MOVE_REQUEST',
+    type: 'INTERACTION.MOVE_REQUEST',
     floor: -1,
     destinationFloors: []
 }
@@ -50,11 +50,36 @@ function updateConsole(consoleState) {
 
 var tableBody = $("#tableBody");
 
+function updatePosition(position) {
+    var positionName = "";
+
+    var nameMap = {
+        17: "Above 3",
+        16: "3 Near up",
+        15: "3 Third floor",
+        14: "3 Near down",
+        13: "Between 3-2",
+        12: "2 Near up",
+        11: "2 Second floor",
+        10: "2 Near down",
+        9: "Between 2-1",
+        8: "1 Near up",
+        7: "1 First floor",
+        6: "1 Near down",
+        5: "Between 1-0",
+        4: "0 Near up",
+        3: "0 Zero floor",
+        2: "0 Near down",
+        2: "Under zero"
+    }
+
+    $("#positionValue").html(nameMap[position]);
+}
 
 ws.onmessage = function (evt) {
     var message = JSON.parse(evt.data);
 
-    if(message.type === undefined) {
+    if (message.type === undefined) {
         return;
     }
 
@@ -67,9 +92,12 @@ ws.onmessage = function (evt) {
             //updateConsole(message.data); 
             break;
         case 'STATE.ELEVATOR_STOPPED':
-            if(message.data == moveRequest.floor) {
+            if (message.data == moveRequest.floor) {
                 sendMoveRequest();
             }
+            break;
+        case 'STATE.POSITION_CHANGED':
+
             break;
         case 'INTERACTION.CONSOLE_CHANGE':
             updateConsole(message.data); break;
@@ -90,7 +118,7 @@ function goToFloor(floor) {
 }
 
 function sendMoveRequest() {
-    $.post('/api/interaction/moverequest', moveRequest); 
+    $.post('/api/interaction/moverequest', moveRequest);
 }
 
 $(document).ready(function () {

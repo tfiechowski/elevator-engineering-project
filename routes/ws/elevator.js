@@ -107,6 +107,15 @@ function endpointHandler(ws, req) {
         }
     }
 
+    var positionChangedListener = (position) => {
+        if(isWebsocketConnected(ws)) {
+            ws.send(JSON.stringify({
+                type: stateMonitor.EVENTS.POSITION_CHANGED,
+                data: position
+            }));
+        }
+    }
+
     ws.on('close', () => {
         debug("Websocket connection closed.");
 
@@ -119,6 +128,9 @@ function endpointHandler(ws, req) {
         stateMonitor.Observable.removeListener(stateMonitor.EVENTS.ELEVATOR_STOPPED,
             elevatorStoppedListener);
 
+        stateMonitor.Observable.removeListener(stateMonitor.EVENTS.POSITION_CHANGED,
+            positionChangedListener);
+
         userInteraction.Observable.removeListener(userInteraction.EVENTS.CONSOLE_CHANGE,
             consoleChangeListener);
 
@@ -130,6 +142,7 @@ function endpointHandler(ws, req) {
     stateMonitor.Observable.on(stateMonitor.EVENTS.CHANGED, stateListener);
     stateMonitor.Observable.on(stateMonitor.EVENTS.FLOOR_CHANGED, floorChangeListener);
     stateMonitor.Observable.on(stateMonitor.EVENTS.ELEVATOR_STOPPED, elevatorStoppedListener);
+    stateMonitor.Observable.on(stateMonitor.EVENTS.POSITION_CHANGED, positionChangedListener);
     userInteraction.Observable.on(userInteraction.EVENTS.CONSOLE_CHANGE, consoleChangeListener);
     userInteraction.Observable.on(userInteraction.EVENTS.REQUEST_MOVE, requestMoveListener);
 

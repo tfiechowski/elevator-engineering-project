@@ -18,7 +18,8 @@ var EVENTS = {
     "CHANGED": "STATE.CHANGED",
     "FLOOR_CHANGED": "STATE.FLOOR_CHANGED",
     "ELEVATOR_STOPPED": "STATE.ELEVATOR_STOPPED",
-    "NEAR_FLOOR": "STATE.NEAR_FLOOR"
+    "NEAR_FLOOR": "STATE.NEAR_FLOOR",
+    "POSITION_CHANGED": "STATE.POSITION_CHANGED"
 }
 
 
@@ -117,6 +118,7 @@ function initializeMonitoring() {
                 } else {
                     position--;
                 }
+                stateMonitorObservable.emit(EVENTS.POSITION_CHANGED, position);
 
                 debug("Pin " + pinIndex + " changed state");
                 debug(JSON.stringify(newState));
@@ -199,20 +201,15 @@ function isFloorPosition(positionValue) {
 function checkPosition(newState) {
     var positionValue = stateUtils.translateStateToPosition(newState);
 
-    // var isFloor = ;
-
+    // Tutaj tylko sprawdzenie przy najechaniu na pietro czy wartosc position jest poprawna
     if (isFloorPosition(positionValue)) {
         position = positionValue;
-    } else {
-
-        // checking going up
-
     }
 }
 
 stateMonitorObservable.on(EVENTS.CHANGED, (newState) => {
-    checkPosition(newState);
     checkFloorChange(newState);
+    checkPosition(newState);
     checkElevatorStopped(newState);
     checkProximity(newState);
 });
