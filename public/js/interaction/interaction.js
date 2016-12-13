@@ -63,9 +63,9 @@ function updateRequestList() {
     $("#requestList").html(
         commands.map((el) => {
             if(el.type == 'call') {
-                return '<li>Floor: ' + el.data.floor + '<br>Up: ' + el.data.up + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Down: ' + el.data.down + '<br>Destination floors: ' + el.data.destinationFloors + '</li>';
+                return '<li>Piętro: ' + el.data.floor + '<br>Góra: ' + el.data.up + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dół: ' + el.data.down + '<br>Piętra docelowe: ' + el.data.destinationFloors + '</li>';
             } else {
-                return '<li>Delay: ' + el.data + '</li>'
+                return '<li>Opóźnienie: ' + el.data + '</li>'
             }
         }).join("\n")
     );
